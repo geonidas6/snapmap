@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Tracemap;
 use App\Models\Media;
+use App\Events\NewTracemapEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Broadcast;
 
 class TracemapController extends Controller
 {
@@ -105,16 +108,22 @@ class TracemapController extends Controller
                 ];
             }
 
+            // Préparer les données du tracemap pour la réponse et la notification
+            $tracemapData = [
+                'id' => $tracemap->id,
+                'latitude' => $tracemap->latitude,
+                'longitude' => $tracemap->longitude,
+                'media' => $mediaItems
+            ];
+            
+            // Envoyer une notification via Pusher
+            $this->sendTracemapNotification($tracemapData);
+            
             // Retourne une réponse JSON avec les informations du tracemap créé
             return response()->json([
                 'success' => true,
                 'message' => 'Tracemap créé avec succès!',
-                'tracemap' => [
-                    'id' => $tracemap->id,
-                    'latitude' => $tracemap->latitude,
-                    'longitude' => $tracemap->longitude,
-                    'media' => $mediaItems
-                ]
+                'tracemap' => $tracemapData
             ]);
 
         } catch (\Exception $e) {
@@ -156,5 +165,46 @@ class TracemapController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    
+    /**
+     * Envoie une notification en temps réel pour informer les autres utilisateurs d'un nouveau tracemap
+     * Utilise le système de broadcasting de Laravel pour envoyer l'événement
+     * 
+     * @param array $tracemapData Les données du tracemap à envoyer
+     * @return void
+     */
+    private function sendTracemapNotification(array $tracemapData): void
+    {
+        try {
+            Log::info('Début de l\'envoi de notification en temps réel pour un nouveau tracemap');
+            
+            // Préparer les données à envoyer
+            $eventData = [
+                'message' => 'Un nouveau tracemap a été créé!',
+                'tracemap' => $tracemapData
+            ];
+            
+            Log::info('Données de l\'événement préparées', [
+                'event_name' => 'new-tracemap',
+                'channel' => 'tracemap-updates',
+                'message' => $eventData['message'],
+                'tracemap_id' => $tracemapData['id'] ?? 'non défini',
+                'media_count' => count($tracemapData['media'] ?? []),
+            ]);
+            
+            // Utiliser l'API de broadcasting de Laravel pour envoyer l'événement
+            broadcast(new \App\Events\NewTracemapEvent($eventData))->toOthers();
+            
+            Log::info('Événement de nouveau tracemap diffusé avec succès via Laravel Broadcasting');
+        } catch (\Exception $e) {
+            // Enregistrer l'erreur mais ne pas interrompre le flux de l'application
+            Log::error('Erreur lors de l\'envoi de la notification en temps réel', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 }

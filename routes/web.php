@@ -30,3 +30,4 @@ Route::get('/migrate', function () {
 
     return 'Migration terminée';
 });
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);

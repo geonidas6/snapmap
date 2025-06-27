@@ -14,11 +14,11 @@
     <meta name="msapplication-starturl" content="/?source=pwa">
     <meta name="format-detection" content="telephone=no">
     <title>TraceMap - Partagez vos moments géolocalisés</title>
-    
+
     <!-- iOS PWA specific -->
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-touch-startup-image" content="/logo.png">
-    
+
     <!-- iOS splash screens -->
     <link rel="apple-touch-startup-image" href="/icons/apple-splash-2048-2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="/icons/apple-splash-1668-2388.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
@@ -37,7 +37,7 @@
     <link rel="apple-touch-icon" href="/icons/apple-icon-120x120.svg" sizes="120x120">
     <link rel="icon" type="image/svg+xml" href="/icons/android-icon-192x192.svg" sizes="192x192">
     <link rel="icon" type="image/svg+xml" href="/icons/android-icon-96x96.svg" sizes="96x96">
-    
+
     <!-- PWA  -->
     <meta name="theme-color" content="{{config('pwa.theme_color')}}"/>
     <link rel="apple-touch-icon" href="/logo.png">
@@ -70,14 +70,14 @@
         .map-container {
             height: 70vh;
         }
-        
+
         /* Styles pour le mode standalone (PWA) */
         html.standalone-mode {
             height: 100%;
             width: 100%;
             overflow: hidden;
         }
-        
+
         html.standalone-mode body {
             height: 100%;
             width: 100%;
@@ -88,7 +88,7 @@
             /* Support pour les appareils avec encoche */
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
-        
+
         html.standalone-mode #map {
             height: 100% !important;
             width: 100% !important;
@@ -99,14 +99,14 @@
             bottom: 0 !important;
             z-index: 10 !important;
         }
-        
+
         /* Masquer la barre d'adresse sur iOS */
         @media screen and (orientation: portrait) {
             html.standalone-mode {
                 min-height: calc(100% + 1px);
             }
         }
-        
+
         /* Ajustements pour les appareils avec encoche */
         @supports (padding-top: env(safe-area-inset-top)) {
             html.standalone-mode body {
@@ -152,15 +152,15 @@
     <script>
         // Détecter si l'application est lancée depuis l'écran d'accueil
         const isInStandaloneMode = () => {
-            return (window.matchMedia('(display-mode: standalone)').matches) || 
-                   (window.navigator.standalone) || 
+            return (window.matchMedia('(display-mode: standalone)').matches) ||
+                   (window.navigator.standalone) ||
                    document.referrer.includes('android-app://');
         };
 
         // Appliquer des styles spécifiques si l'application est en mode standalone
         if (isInStandaloneMode()) {
             document.documentElement.classList.add('standalone-mode');
-            
+
             // Masquer les éléments d'interface du navigateur si possible
             const metaViewport = document.querySelector('meta[name="viewport"]');
             if (metaViewport) {
@@ -204,5 +204,7 @@
             }
         });
     </script>
+
+ @yield('scripts')
 </body>
 </html>
