@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2732" viewBox="0 0 2048 2732">
+  <rect width="2048" height="2732" fill="#3490dc" />
+  <g transform="translate(1024, 1366)">
+    <!-- Logo central -->
+    <circle cx="0" cy="0" r="300" fill="white" stroke="#2779bd" stroke-width="15" />
+    <circle cx="0" cy="0" r="180" fill="#3490dc" stroke="white" stroke-width="15" />
+    <path d="M0 -120 L0 120 M-120 0 L120 0" stroke="white" stroke-width="30" stroke-linecap="round" />
+    
+    <!-- Texte TraceMap -->
+    <text x="0" y="450" font-family="Arial, sans-serif" font-size="120" font-weight="bold" fill="white" text-anchor="middle">TraceMap</text>
+    <text x="0" y="580" font-family="Arial, sans-serif" font-size="60" fill="white" text-anchor="middle">Partagez vos moments géolocalisés</text>
+  </g>
+</svg>
