@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\TracemapController;
+use App\Http\Controllers\AdminController;
 
 // Route principale qui redirige vers la page d'accueil des tracemaps
 Route::get('/', function () {
@@ -22,18 +23,6 @@ Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('
 
 if (App::environment('local')) {
     Route::middleware('auth')->group(function () {
-        // Route pour lancer les migrations
-        Route::get('/migrate', function () {
-            Artisan::call('optimize:clear');
-            // Supprime les fichiers du dossier storage/app/public/tracemaps
-            File::deleteDirectory(storage_path('app/public/tracemaps'));
-
-            Artisan::call('storage:link');
-            Artisan::call('migrate:fresh --seed');
-
-            return 'Migration terminée';
-        });
-
         Route::get('/queue', function () {
             Artisan::call('queue:work');
 
@@ -41,4 +30,9 @@ if (App::environment('local')) {
         });
     });
 }
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::view('/', 'admin.dashboard')->name('admin.dashboard');
+    Route::post('/reset', [AdminController::class, 'resetDatabase'])->name('admin.reset');
+});
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
