@@ -13,7 +13,6 @@ class Media extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'snap_id',
         'tracemap_id',
         'file_path',
         'file_type',
