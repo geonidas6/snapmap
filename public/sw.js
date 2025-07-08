@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_NAME = "offline-cache-v1";
-const OFFLINE_URL = 'public/offline.html';
+const OFFLINE_URL = '/offline.html';
 
 const filesToCache = [
     OFFLINE_URL,
