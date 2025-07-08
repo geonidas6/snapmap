@@ -27,18 +27,6 @@ Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.lo
 
 if (App::environment('local')) {
     Route::middleware('auth')->group(function () {
-        // Route pour lancer les migrations
-        Route::get('/migrate', function () {
-            Artisan::call('optimize:clear');
-            // Supprime les fichiers du dossier storage/app/public/tracemaps
-            File::deleteDirectory(storage_path('app/public/tracemaps'));
-
-            Artisan::call('storage:link');
-            Artisan::call('migrate:fresh --seed');
-
-            return 'Migration terminée';
-        });
-
         Route::get('/queue', function () {
             Artisan::call('queue:work');
 
@@ -46,4 +34,9 @@ if (App::environment('local')) {
         });
     });
 }
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::view('/', 'admin.dashboard')->name('admin.dashboard');
+    Route::post('/reset', [AdminController::class, 'resetDatabase'])->name('admin.reset');
+});
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
