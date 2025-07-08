@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\TracemapController;
+use App\Http\Controllers\AdminController;
 
 // Route principale qui redirige vers la page d'accueil des tracemaps
 Route::get('/', function () {
@@ -17,6 +18,10 @@ Route::post('/tracemaps', [TracemapController::class, 'store'])->name('tracemap.
 
 // Route pour le téléversement AJAX
 Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('tracemap.store.ajax');
+
+Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 
 
