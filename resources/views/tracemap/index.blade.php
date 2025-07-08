@@ -295,6 +295,13 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* Petit compteur d'utilisateurs en ligne */
+        #online-count {
+            font-size: 0.875rem; /* équivalent Tailwind text-sm */
+            color: #4B5563; /* équivalent Tailwind text-gray-600 */
+            margin-left: 0.5rem; /* équivalent Tailwind ml-2 */
+        }
+
         /* Styles pour les contrôles de la carte */
         .leaflet-control-layers {
             border-radius: 8px !important;
@@ -359,18 +366,19 @@
          data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
          data-step="2">
         <div class="flex items-center justify-between">
-            <h1 class="text-xl font-bold text-gray-800">TraceMap</h1>
-            <div class="flex items-center">
-                <span class="text-sm text-gray-700 mr-4"><span id="online-count">0</span> en ligne</span>
-                <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Aide
-                </button>
-            </div>
+
+            <h1 class="text-xl font-bold text-gray-800">TraceMap
+                <span id="online-count" class="text-sm text-gray-600 ml-2"></span>
+            </h1>
+            <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Aide
+            </button>
+
         </div>
     </div>
 
