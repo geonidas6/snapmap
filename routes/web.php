@@ -19,6 +19,11 @@ Route::post('/tracemaps', [TracemapController::class, 'store'])->name('tracemap.
 // Route pour le téléversement AJAX
 Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('tracemap.store.ajax');
 
+
+Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
 // Maintenance mode routes
 Route::middleware('auth')->group(function () {
     Route::post('/maintenance/on', [AdminController::class, 'enableMaintenance'])->name('admin.maintenance.on');
@@ -27,20 +32,9 @@ Route::middleware('auth')->group(function () {
 
 
 
+
 if (App::environment('local')) {
     Route::middleware('auth')->group(function () {
-        // Route pour lancer les migrations
-        Route::get('/migrate', function () {
-            Artisan::call('optimize:clear');
-            // Supprime les fichiers du dossier storage/app/public/tracemaps
-            File::deleteDirectory(storage_path('app/public/tracemaps'));
-
-            Artisan::call('storage:link');
-            Artisan::call('migrate:fresh --seed');
-
-            return 'Migration terminée';
-        });
-
         Route::get('/queue', function () {
             Artisan::call('queue:work');
 
@@ -48,4 +42,9 @@ if (App::environment('local')) {
         });
     });
 }
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::view('/', 'admin.dashboard')->name('admin.dashboard');
+    Route::post('/reset', [AdminController::class, 'resetDatabase'])->name('admin.reset');
+});
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
