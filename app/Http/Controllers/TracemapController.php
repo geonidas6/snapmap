@@ -115,10 +115,11 @@ class TracemapController extends Controller
                 'longitude' => $tracemap->longitude,
                 'media' => $mediaItems
             ];
-            
+
+
             // Envoyer une notification via Pusher
             $this->sendTracemapNotification($tracemapData);
-            
+
             // Retourne une réponse JSON avec les informations du tracemap créé
             return response()->json([
                 'success' => true,
@@ -166,11 +167,11 @@ class TracemapController extends Controller
     {
         //
     }
-    
+
     /**
      * Envoie une notification en temps réel pour informer les autres utilisateurs d'un nouveau tracemap
      * Utilise le système de broadcasting de Laravel pour envoyer l'événement
-     * 
+     *
      * @param array $tracemapData Les données du tracemap à envoyer
      * @return void
      */
@@ -178,13 +179,13 @@ class TracemapController extends Controller
     {
         try {
             Log::info('Début de l\'envoi de notification en temps réel pour un nouveau tracemap');
-            
+
             // Préparer les données à envoyer
             $eventData = [
                 'message' => 'Un nouveau tracemap a été créé!',
                 'tracemap' => $tracemapData
             ];
-            
+
             Log::info('Données de l\'événement préparées', [
                 'event_name' => 'new-tracemap',
                 'channel' => 'tracemap-updates',
@@ -192,10 +193,10 @@ class TracemapController extends Controller
                 'tracemap_id' => $tracemapData['id'] ?? 'non défini',
                 'media_count' => count($tracemapData['media'] ?? []),
             ]);
-            
+
             // Utiliser l'API de broadcasting de Laravel pour envoyer l'événement
             broadcast(new \App\Events\NewTracemapEvent($eventData))->toOthers();
-            
+
             Log::info('Événement de nouveau tracemap diffusé avec succès via Laravel Broadcasting');
         } catch (\Exception $e) {
             // Enregistrer l'erreur mais ne pas interrompre le flux de l'application

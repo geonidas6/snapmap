@@ -115,6 +115,25 @@
             }
         }
 
+        /* Animations pour les notifications */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(20px); }
+        }
+
         /* Style pour l'affichage plein écran */
         .fullscreen-media {
             position: fixed;
@@ -918,12 +937,17 @@
                 map.removeLayer(tempMarker);
             }
 
+
+
             // Ajouter un marqueur temporaire à l'emplacement cliqué
-            tempMarker = L.marker([clickedLat, clickedLng]).addTo(map);
-            tempMarker.bindPopup('Position du nouveau Tracemap').openPopup();
+            // tempMarker = L.marker([clickedLat, clickedLng]).addTo(map);
+            //tempMarker.bindPopup('Position du nouveau Tracemap').openPopup();
+            //afficher le tracemap creer
+
+
 
             // Afficher le modal
-            uploadModal.classList.remove('hidden');
+             uploadModal.classList.remove('hidden');
         });
 
         // Fermer le modal lorsqu'on clique sur le bouton de fermeture ou d'annulation
@@ -961,13 +985,29 @@
             uploadPercentage.textContent = '0%';
 
             // Créer un objet FormData pour envoyer les fichiers
-            const formData = new FormData(tracemapForm);
+            const formData = new FormData();
 
-            // Créer une requête XMLHttpRequest pour pouvoir suivre la progression
-            const xhr = new XMLHttpRequest();
+            // Ajouter tous les champs du formulaire sauf les fichiers
+            const formElements = tracemapForm.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                if (element.name && element.name !== 'content[]') {
+                    formData.append(element.name, element.value);
+                }
+            }
 
-            // Configurer la progression du téléchargement
-            xhr.upload.addEventListener('progress', function (e) {
+            // Compter le nombre total de fichiers à traiter
+            const totalFiles = contentInput.files.length;
+            let processedFiles = 0;
+
+            // Fonction pour envoyer le formulaire une fois tous les fichiers traités
+            function sendFormData() {
+                if (processedFiles === totalFiles) {
+                    // Créer une requête XMLHttpRequest pour pouvoir suivre la progression
+                    const xhr = new XMLHttpRequest();
+
+                    // Configurer la progression du téléchargement
+                    xhr.upload.addEventListener('progress', function (e) {
                 if (e.lengthComputable) {
                     const percentComplete = Math.round((e.loaded / e.total) * 100);
                     uploadPercentage.textContent = percentComplete + '%';
@@ -998,11 +1038,14 @@
                         const tracemap = data.tracemap;
                         if (tracemap.media && tracemap.media.length > 0) {
                             const firstMedia = tracemap.media[0];
+
+                            // Créer un nouveau marqueur sur la carte avec animation
                             const marker = createNewMarker(
                                 tracemap.latitude,
                                 tracemap.longitude,
                                 firstMedia.file_path,
-                                firstMedia.is_video || false
+                                firstMedia.is_video || false,
+                                true // Ajouter une animation pour les nouveaux marqueurs
                             );
 
                             // Ajouter un badge indiquant le nombre de médias si > 1
@@ -1021,38 +1064,87 @@
                             marker.on('click', function () {
                                 showFullscreenMedia(firstMedia, tracemap.media, 0, tracemap);
                             });
+
+                            // Notification visuelle pour informer l'utilisateur
+                            const notification = document.createElement('div');
+                            notification.className = 'fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-lg shadow-lg z-50 fade-in';
+                            notification.innerHTML = `
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Nouveau Tracemap créé avec succès!</span>
+                                </div>
+                            `;
+                            document.body.appendChild(notification);
+
+                            // Supprimer la notification après 5 secondes
+                            setTimeout(() => {
+                                notification.classList.add('fade-out');
+                                setTimeout(() => {
+                                    document.body.removeChild(notification);
+                                }, 500);
+                            }, 5000);
                         }
 
-                        // Réinitialiser le formulaire après un court délai
-                        setTimeout(() => {
-                            closeModal();
-                        }, 2000);
+                        // Réinitialiser le formulaire
+                        tracemapForm.reset();
+                        previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
+
+                        // Fermer le modal après un court délai
+                        setTimeout(function () {
+                            uploadModal.classList.add('hidden');
+                        }, 500);
                     } else {
                         // Afficher le message d'erreur
-                        errorMessage.textContent = data.message || 'Une erreur est survenue lors du téléversement.';
+                        errorMessage.textContent = data.message || 'Une erreur est survenue lors de l\'envoi.';
                         uploadError.classList.remove('hidden');
                     }
                 } else {
-                    // Gérer les erreurs HTTP
+                    // Masquer l'indicateur de chargement
                     uploadLoading.classList.add('hidden');
                     uploadFormContent.classList.remove('hidden');
-                    errorMessage.textContent = 'Erreur de serveur: ' + xhr.status;
-                    uploadError.classList.remove('hidden');
-                    console.error('Erreur HTTP:', xhr.status);
-                }
-            };
 
-            // Gérer les erreurs de réseau
-            xhr.onerror = function () {
-                uploadLoading.classList.add('hidden');
-                uploadFormContent.classList.remove('hidden');
-                errorMessage.textContent = 'Erreur de connexion réseau';
-                uploadError.classList.remove('hidden');
-                console.error('Erreur réseau');
+                    // Afficher un message d'erreur générique
+                    errorMessage.textContent = 'Une erreur est survenue lors de l\'envoi.';
+                    uploadError.classList.remove('hidden');
+                }
             };
 
             // Envoyer la requête
             xhr.send(formData);
+                }
+            }
+
+            // Traiter chaque fichier
+            Array.from(contentInput.files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    // Compresser l'image avant de l'ajouter au FormData
+                    new Compressor(file, {
+                        quality: 0.8, // Qualité de l'image (0 à 1)
+                        maxWidth: 1920, // Largeur maximale
+                        maxHeight: 1080, // Hauteur maximale
+                        success(result) {
+                            // Ajouter l'image compressée au FormData
+                            formData.append('content[]', result, file.name);
+                            processedFiles++;
+                            sendFormData();
+                        },
+                        error(err) {
+                            console.error('Erreur lors de la compression de l\'image:', err.message);
+                            // En cas d'erreur, utiliser l'image originale
+                            formData.append('content[]', file);
+                            processedFiles++;
+                            sendFormData();
+                        }
+                    });
+                } else {
+                    // Pour les vidéos et autres types de fichiers, les ajouter directement
+                    formData.append('content[]', file);
+                    processedFiles++;
+                    sendFormData();
+                }
+            });
         });
 
         // Fonction pour fermer le modal
@@ -1070,7 +1162,7 @@
             }
         }
 
-       setInterval(function () {
+       setTimeout(function () {
            // Écouter les événements Pusher pour les mises à jour de tracemap en temps réel via Laravel Echo
            console.log('Configuration de l\'écoute des événements via Echo...',window.Echo);
 
@@ -1213,6 +1305,14 @@
             return marker;
         }
 
+        // Charger la bibliothèque Compressor.js
+        const compressorScript = document.createElement('script');
+        compressorScript.src = '{{ asset("js/compressorjs-main/dist/compressor.js") }}';
+        document.head.appendChild(compressorScript);
+
+        // Taille maximale pour les vidéos (3 Mo en octets)
+        const MAX_VIDEO_SIZE = 3 * 1024 * 1024;
+
         // Prévisualisation des fichiers sélectionnés avec style amélioré
         contentInput.addEventListener('change', function () {
             // Vider le conteneur de prévisualisation
@@ -1220,6 +1320,23 @@
 
             // Afficher un message si aucun fichier n'est sélectionné
             if (this.files.length === 0) {
+                previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
+                return;
+            }
+
+            // Vérifier la taille des vidéos
+            let hasOversizedVideos = false;
+            Array.from(this.files).forEach(file => {
+                if (file.type.startsWith('video/') && file.size > MAX_VIDEO_SIZE) {
+                    hasOversizedVideos = true;
+                }
+            });
+
+            if (hasOversizedVideos) {
+                errorMessage.textContent = 'Les vidéos ne doivent pas dépasser 3 Mo.';
+                uploadError.classList.remove('hidden');
+                // Réinitialiser l'input file
+                contentInput.value = '';
                 previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
                 return;
             }

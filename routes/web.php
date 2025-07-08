@@ -30,4 +30,10 @@ Route::get('/migrate', function () {
 
     return 'Migration terminée';
 });
+
+Route::get('/queue', function () {
+    Artisan::call('queue:work');
+
+    return 'queue';
+});
 Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
