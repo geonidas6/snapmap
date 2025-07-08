@@ -19,6 +19,10 @@ Route::post('/tracemaps', [TracemapController::class, 'store'])->name('tracemap.
 // Route pour le téléversement AJAX
 Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('tracemap.store.ajax');
 
+Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
 
 
 if (App::environment('local')) {
