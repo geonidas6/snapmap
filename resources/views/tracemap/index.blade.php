@@ -360,14 +360,17 @@
          data-step="2">
         <div class="flex items-center justify-between">
             <h1 class="text-xl font-bold text-gray-800">TraceMap</h1>
-            <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Aide
-            </button>
+            <div class="flex items-center">
+                <span class="text-sm text-gray-700 mr-4"><span id="online-count">0</span> en ligne</span>
+                <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Aide
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1250,6 +1253,33 @@
                });
 
        },2000);
+
+        // Gestion du canal de présence pour compter les utilisateurs en ligne
+        let onlineCount = 0;
+        function updateOnlineCount() {
+            const countEl = document.getElementById('online-count');
+            if (countEl) {
+                countEl.textContent = onlineCount;
+            }
+        }
+
+        try {
+            window.Echo.join('tracemap-presence')
+                .here((users) => {
+                    onlineCount = users.length;
+                    updateOnlineCount();
+                })
+                .joining(() => {
+                    onlineCount++;
+                    updateOnlineCount();
+                })
+                .leaving(() => {
+                    onlineCount = Math.max(onlineCount - 1, 0);
+                    updateOnlineCount();
+                });
+        } catch (error) {
+            console.error('Presence channel error:', error);
+        }
 
         // Fonction pour créer un nouveau marqueur après téléversement
         function createNewMarker(lat, lng, mediaPath, isVideo = false, animate = false) {
