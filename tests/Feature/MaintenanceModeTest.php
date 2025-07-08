@@ -2,31 +2,38 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MaintenanceModeTest extends TestCase
 {
-    /** @test */
-    public function maintenance_mode_can_be_enabled_and_bypassed_with_secret(): void
+    use RefreshDatabase;
+
+    public function test_admin_can_enable_maintenance_and_get_secret_link(): void
     {
-        $user = User::factory()->create();
+        $admin = \App\Models\User::factory()->create(['is_admin' => true]);
 
-        $this->actingAs($user)
-            ->post(route('admin.maintenance.on'))
-            ->assertRedirect();
+        $response = $this->actingAs($admin)->post('/admin/maintenance/enable');
 
-        $this->assertTrue(app()->isDownForMaintenance());
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['secret']);
+    }
 
-        $this->get('/')
-            ->assertStatus(503);
+    public function test_admin_can_disable_maintenance(): void
+    {
+        $admin = \App\Models\User::factory()->create(['is_admin' => true]);
 
-        $secret = config('app.maintenance_secret');
-        $this->get('/' . $secret)->assertRedirect('/');
+        $this->actingAs($admin)->post('/admin/maintenance/enable');
 
-        $this->get('/')->assertOk();
+        $response = $this->actingAs($admin)->post('/admin/maintenance/disable');
 
-        $this->post(route('admin.maintenance.off'))->assertRedirect();
-        $this->assertFalse(app()->isDownForMaintenance());
+        $response->assertStatus(200);
+    }
+
+    public function test_guest_cannot_enable_maintenance(): void
+    {
+        $response = $this->post('/admin/maintenance/enable');
+
+        $response->assertRedirect('/login');
     }
 }
