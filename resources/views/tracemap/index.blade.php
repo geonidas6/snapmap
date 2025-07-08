@@ -1271,23 +1271,26 @@
             }
         }
 
-        try {
-            window.Echo.join('tracemap-presence')
-                .here((users) => {
-                    onlineCount = users.length;
-                    updateOnlineCount();
-                })
-                .joining(() => {
-                    onlineCount++;
-                    updateOnlineCount();
-                })
-                .leaving(() => {
-                    onlineCount = Math.max(onlineCount - 1, 0);
-                    updateOnlineCount();
-                });
-        } catch (error) {
-            console.error('Presence channel error:', error);
-        }
+        setInterval(function () {
+            try {
+                window.Echo.join('tracemap-presence')
+                    .here((users) => {
+                        onlineCount = users.length;
+                        updateOnlineCount();
+                    })
+                    .joining(() => {
+                        onlineCount++;
+                        updateOnlineCount();
+                    })
+                    .leaving(() => {
+                        onlineCount = Math.max(onlineCount - 1, 0);
+                        updateOnlineCount();
+                    });
+            } catch (error) {
+                console.error('Presence channel error:', error);
+            }
+        },2000);
+
 
         // Fonction pour créer un nouveau marqueur après téléversement
         function createNewMarker(lat, lng, mediaPath, isVideo = false, animate = false) {
