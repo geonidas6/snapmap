@@ -503,6 +503,9 @@
         const successMessage = document.getElementById('success-message');
         const errorMessage = document.getElementById('error-message');
 
+        // Buffer persistant pour stocker les fichiers sélectionnés
+        const fileBuffer = new DataTransfer();
+
         // Variables pour stocker les coordonnées du clic et le marqueur temporaire
         let clickedLat, clickedLng;
         let tempMarker = null;
@@ -1089,6 +1092,7 @@
 
                         // Réinitialiser le formulaire
                         tracemapForm.reset();
+                        fileBuffer.items.clear();
                         previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
 
                         // Fermer le modal après un court délai
@@ -1153,6 +1157,7 @@
 
             // Réinitialiser le formulaire
             tracemapForm.reset();
+            fileBuffer.items.clear();
             previewContainer.innerHTML = '';
 
             // Supprimer le marqueur temporaire
@@ -1315,18 +1320,17 @@
 
         // Prévisualisation des fichiers sélectionnés avec style amélioré
         contentInput.addEventListener('change', function () {
-            // Vider le conteneur de prévisualisation
-            previewContainer.innerHTML = '';
+            const newFiles = Array.from(this.files);
 
-            // Afficher un message si aucun fichier n'est sélectionné
-            if (this.files.length === 0) {
+            // Afficher un message si aucun fichier n'est sélectionné et que le buffer est vide
+            if (newFiles.length === 0 && fileBuffer.files.length === 0) {
                 previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
                 return;
             }
 
             // Vérifier la taille des vidéos
             let hasOversizedVideos = false;
-            Array.from(this.files).forEach(file => {
+            newFiles.forEach(file => {
                 if (file.type.startsWith('video/') && file.size > MAX_VIDEO_SIZE) {
                     hasOversizedVideos = true;
                 }
@@ -1337,16 +1341,27 @@
                 uploadError.classList.remove('hidden');
                 // Réinitialiser l'input file
                 contentInput.value = '';
-                previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
+                if (fileBuffer.files.length === 0) {
+                    previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
+                }
                 return;
             }
 
-            // Parcourir tous les fichiers sélectionnés
-            Array.from(this.files).forEach((file, index) => {
+            const existingLength = fileBuffer.files.length;
+            newFiles.forEach(file => fileBuffer.items.add(file));
+            contentInput.files = fileBuffer.files;
+            if (existingLength === 0) {
+                previewContainer.innerHTML = '';
+            }
+
+            const startIndex = fileBuffer.files.length - newFiles.length;
+
+            // Parcourir uniquement les nouveaux fichiers sélectionnés
+            newFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 const previewItem = document.createElement('div');
                 previewItem.className = 'preview-item bg-gray-50 border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow relative';
-                previewItem.dataset.fileIndex = index;
+                previewItem.dataset.fileIndex = startIndex + index;
 
                 // Ajouter un indicateur de chargement
                 const loadingIndicator = document.createElement('div');
@@ -1369,11 +1384,11 @@
                 `;
                 deleteButton.addEventListener('click', function (e) {
                     e.stopPropagation();
-                    removeFileFromInput(index);
+                    removeFileFromInput(previewItem.dataset.fileIndex);
                     previewContainer.removeChild(previewItem);
 
                     // Si plus aucun fichier, afficher un message
-                    if (previewContainer.children.length === 0) {
+                    if (fileBuffer.files.length === 0) {
                         previewContainer.innerHTML = '<div class="col-span-2 text-center text-gray-500 py-4">Aucun fichier sélectionné</div>';
                     }
                 });
@@ -1440,18 +1455,18 @@
 
         // Fonction pour supprimer un fichier de l'input
         function removeFileFromInput(indexToRemove) {
-            // Créer une nouvelle liste de fichiers sans celui à supprimer
             const dt = new DataTransfer();
-            const files = contentInput.files;
+            const files = fileBuffer.files;
 
             for (let i = 0; i < files.length; i++) {
-                if (i !== indexToRemove) {
+                if (i !== parseInt(indexToRemove)) {
                     dt.items.add(files[i]);
                 }
             }
 
-            // Mettre à jour l'input avec la nouvelle liste de fichiers
-            contentInput.files = dt.files;
+            fileBuffer.items.clear();
+            Array.from(dt.files).forEach(file => fileBuffer.items.add(file));
+            contentInput.files = fileBuffer.files;
         }
 
         // Fonction pour formater la taille du fichier
