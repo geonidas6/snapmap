@@ -366,6 +366,7 @@
          data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
          data-step="2">
         <div class="flex items-center justify-between">
+
             <h1 class="text-xl font-bold text-gray-800">TraceMap
                 <span id="online-count" class="text-sm text-gray-600 ml-2"></span>
             </h1>
@@ -377,6 +378,7 @@
                 </svg>
                 Aide
             </button>
+
         </div>
     </div>
 
@@ -1259,6 +1261,33 @@
                });
 
        },2000);
+
+        // Gestion du canal de présence pour compter les utilisateurs en ligne
+        let onlineCount = 0;
+        function updateOnlineCount() {
+            const countEl = document.getElementById('online-count');
+            if (countEl) {
+                countEl.textContent = onlineCount;
+            }
+        }
+
+        try {
+            window.Echo.join('tracemap-presence')
+                .here((users) => {
+                    onlineCount = users.length;
+                    updateOnlineCount();
+                })
+                .joining(() => {
+                    onlineCount++;
+                    updateOnlineCount();
+                })
+                .leaving(() => {
+                    onlineCount = Math.max(onlineCount - 1, 0);
+                    updateOnlineCount();
+                });
+        } catch (error) {
+            console.error('Presence channel error:', error);
+        }
 
         // Fonction pour créer un nouveau marqueur après téléversement
         function createNewMarker(lat, lng, mediaPath, isVideo = false, animate = false) {
