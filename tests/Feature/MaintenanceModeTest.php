@@ -13,7 +13,9 @@ class MaintenanceModeTest extends TestCase
     {
         $admin = \App\Models\User::factory()->create(['is_admin' => true]);
 
-        $response = $this->actingAs($admin)->post('/admin/maintenance/enable');
+        $response = $this->actingAs($admin)
+            ->withHeader('Accept', 'application/json')
+            ->post('/admin/maintenance/enable');
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['secret']);
@@ -23,9 +25,13 @@ class MaintenanceModeTest extends TestCase
     {
         $admin = \App\Models\User::factory()->create(['is_admin' => true]);
 
-        $this->actingAs($admin)->post('/admin/maintenance/enable');
+        $this->actingAs($admin)
+            ->withHeader('Accept', 'application/json')
+            ->post('/admin/maintenance/enable');
 
-        $response = $this->actingAs($admin)->post('/admin/maintenance/disable');
+        $response = $this->actingAs($admin)
+            ->withHeader('Accept', 'application/json')
+            ->post('/admin/maintenance/disable');
 
         $response->assertStatus(200);
     }

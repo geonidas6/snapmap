@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.tracemapapp')
 
 @section('content')
     <style>
