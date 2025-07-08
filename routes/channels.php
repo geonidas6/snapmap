@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('tracemap-updates', function () {
     return true; // Canal public, accessible à tous
 });
+
+// Presence channel for tracemap users
+Broadcast::channel('tracemap-presence', function ($user) {
+    return [
+        'id' => $user->id,
+        'name' => $user->name,
+    ];});
