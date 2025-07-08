@@ -19,9 +19,17 @@ Route::post('/tracemaps', [TracemapController::class, 'store'])->name('tracemap.
 // Route pour le téléversement AJAX
 Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('tracemap.store.ajax');
 
+
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
+// Maintenance mode routes
+Route::middleware('auth')->group(function () {
+    Route::post('/maintenance/on', [AdminController::class, 'enableMaintenance'])->name('admin.maintenance.on');
+    Route::post('/maintenance/off', [AdminController::class, 'disableMaintenance'])->name('admin.maintenance.off');
+});
+
 
 
 
