@@ -21,6 +21,7 @@ Broadcast::channel('tracemap-updates', function () {
 
 // Presence channel for tracemap users with guest support
 Broadcast::channel('tracemap-presence', function ($user) {
+   
     if ($user) {
         return [
             'id' => $user->id,
@@ -34,7 +35,8 @@ Broadcast::channel('tracemap-presence', function ($user) {
         session(['guest_id' => $guest]);
     }
 
-    return [        'id' => $guest,
+    return [
+        'id' => $guest,
         'name' => 'Guest',
     ];
 });
