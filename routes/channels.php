@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Str;
 
@@ -19,24 +20,32 @@ Broadcast::channel('tracemap-updates', function () {
     return true; // Canal public, accessible à tous
 });
 
+// Canal public pour les messages de chat
+Broadcast::channel('chat-messages', function () {
+    return true; // Canal public, accessible à tous
+});
+
 // Presence channel for tracemap users with guest support
-Broadcast::channel('tracemap-presence', function ($user) {
-   
-    if ($user) {
+Broadcast::channel('tracemap-presence', function ($user = null) {
+    // Toujours autoriser l'accès au canal de présence
+    
+    // Si l'utilisateur est authentifié, retourner ses informations
+    if (Auth::check()) {
+        $authenticatedUser = Auth::user();
         return [
-            'id' => $user->id,
-            'name' => $user->name,
+            'id' => $authenticatedUser->id,
+            'name' => $authenticatedUser->name,
+            'type' => 'user'
         ];
     }
-
-    $guest = session('guest_id');
-    if (! $guest) {
-        $guest = 'guest-' . Str::random(8);
-        session(['guest_id' => $guest]);
-    }
-
+   
+    // Pour les utilisateurs invités, générer un ID unique basé sur la session
+    $sessionId = session()->getId();
+    $guestId = 'guest-' . substr(md5($sessionId), 0, 8);
+    
     return [
-        'id' => $guest,
-        'name' => 'Guest',
+        'id' => $guestId,
+        'name' => 'Invité',
+        'type' => 'guest'
     ];
 });

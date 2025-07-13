@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tracemap;
 use App\Models\Media;
+use App\Models\Message;
 use App\Events\NewTracemapEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -205,6 +206,85 @@ class TracemapController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+    /**
+     * Récupère les messages récents (moins de 24h) pour le chat
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMessages()
+    {
+        try {
+            $messages = Message::getRecentMessages();
+            
+            return response()->json([
+                'success' => true,
+                'messages' => $messages
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des messages: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Stocke un nouveau message dans la base de données et le diffuse en temps réel
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeMessage(Request $request)
+    {
+        try {
+            // Validation des données du message
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'message' => 'required|string|max:1000'
+            ]);
+
+            // Création du nouveau message
+            $message = Message::create([
+                'name' => $validated['name'],
+                'message' => $validated['message']
+            ]);
+
+            // Diffuser le message en temps réel via Pusher
+            $this->broadcastNewMessage($message->toArray());
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'notification' => 'Message envoyé avec succès!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de l\'envoi du message: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Diffuse un nouveau message via Pusher pour une communication en temps réel
+     * 
+     * @param array $messageData Les données du message à diffuser
+     * @return void
+     */
+    private function broadcastNewMessage(array $messageData): void
+    {
+        try {
+            // Déclencher l'événement de nouveau message via Pusher
+            event(new \App\Events\NewMessageEvent($messageData));
+        } catch (\Exception $e) {
+            // Enregistrer l'erreur mais ne pas interrompre le flux
+            \Illuminate\Support\Facades\Log::error('Erreur lors de la diffusion du message en temps réel', [
+                'message' => $e->getMessage(),
+                'messageData' => $messageData
             ]);
         }
     }

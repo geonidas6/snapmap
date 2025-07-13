@@ -51,6 +51,179 @@
             background-color: #2563eb !important;
         }
 
+        /* Styles pour le chat amélioré */
+        .chat-message {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* Amélioration du scroll du chat */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Effet de typing pour les nouveaux messages */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 16px;
+            margin: 8px 0;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #94a3b8;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Amélioration des bulles de message */
+        .message-bubble {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-1px);
+        }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .message-bubble.other::before {
+            left: -8px;
+            top: 12px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid white;
+        }
+
+        .message-bubble.current::before {
+            right: -8px;
+            top: 12px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid #10b981;
+        }
+
+        /* Animation pour l'envoi de message */
+        .sending-message {
+            opacity: 0.6;
+            transform: scale(0.98);
+            transition: all 0.3s ease;
+        }
+
+        .message-sent {
+             opacity: 1;
+             transform: scale(1);
+         }
+
+         .introjs-prevbutton:hover, .introjs-nextbutton:hover {
+             background-color: #2563eb !important;
+         }
+
+        /* Styles pour le chat moderne */
+        @keyframes fade-in {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        /* Scrollbar personnalisée pour le chat */
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #chat-messages::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Animation pour le panneau de chat */
+        #chat-window {
+            backdrop-filter: blur(10px);
+            /*height: 51vh !important;*/
+        }
+        
+        /* Effet de survol pour les messages */
+        .chat-message:hover {
+            transform: translateY(-1px);
+            transition: transform 0.2s ease;
+        }
+
         /* Styles pour la carte en plein écran */
         #map {
             height: 100vh;
@@ -295,6 +468,18 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
+
+        .map-ui-online-count {
+            position: absolute;
+            top: 20px;
+            left: 270px;
+            z-index: 1000;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
         /* Petit compteur d'utilisateurs en ligne */
         #online-count {
             font-size: 0.875rem; /* équivalent Tailwind text-sm */
@@ -367,9 +552,7 @@
          data-step="2">
         <div class="flex items-center justify-between">
 
-            <h1 class="text-xl font-bold text-gray-800">TraceMap
-                <span id="online-count" class="text-sm text-gray-600 ml-2"></span>
-            </h1>
+            <h1 class="text-xl font-bold text-gray-800">TraceMap</h1>
             <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
@@ -381,7 +564,22 @@
 
         </div>
     </div>
+    
 
+    <!-- Compteur d'utilisateurs en ligne séparé -->
+      <div class="map-ui-online-count"
+         data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
+         data-step="2">
+        <div class="flex items-center justify-between">
+
+             <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-sm font-medium text-gray-700">
+              Online:  <span id="online-count">0</span>
+            </span>
+
+        </div>
+    </div>
+   
     <!-- Le bouton flottant a été retiré, l'ajout se fait maintenant directement en cliquant sur la carte -->
 
     <!-- Modal pour téléverser des médias après un clic sur la carte (style Tracemapchat) -->
@@ -494,6 +692,62 @@
 
     <!-- Conteneur pour l'affichage des médias en plein écran -->
     <div id="fullscreen-container"></div>
+
+    <!-- Chat rétractable -->
+    <div id="chat-container" class="fixed bottom-4 left-4 z-50">
+        <!-- Bouton pour ouvrir/fermer le chat -->
+        <div id="chat-toggle" class="bg-blue-500 hover:bg-green-600 text-white rounded-full p-3 cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105">
+            <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.906-1.289L3 21l2.289-5.094A9.863 9.863 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
+            </svg>
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </div>
+        
+        <!-- Fenêtre de chat - Mode plein écran -->
+        <div id="chat-window" class="hidden fixed inset-0 bg-white flex flex-col z-50">
+            <!-- En-tête du chat avec compteur d'utilisateurs -->
+            <div class="bg-gradient-to-r from-green-500 to-teal-600 text-white p-4 flex items-center justify-between shadow-lg">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-sm">Chat Prestataires</h3>
+                        <p id="chat-online-count" class="text-xs">0 en ligne</p>
+                    </div>
+                </div>
+                <button id="minimize-chat" class="text-blue-500 hover:text-black-500 transition-colors bg-slate-200" >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Zone des messages -->
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
+                <!-- Messages du chat seront ajoutés ici -->
+                <div class="text-center text-gray-500 text-sm py-4">
+                    Bienvenue dans le chat ! Commencez une conversation...
+                </div>
+            </div>
+            
+            <!-- Zone de saisie -->
+            <div class="p-4 border-t border-gray-200 bg-white shadow-inner">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="chat-input" placeholder="Tapez votre message..." class="flex-1 px-4 py-3 border border-blue-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md">
+                    <button id="send-message" class="bg-blue-500 hover:bg-blue-600 text-white rounded-xl p-3 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <script>
@@ -1264,17 +1518,25 @@
 
         // Gestion du canal de présence pour compter les utilisateurs en ligne
         let onlineCount = 0;
+        /**
+         * Met à jour les compteurs d'utilisateurs en ligne
+         * Synchronise le compteur principal et le compteur séparé
+         */
         function updateOnlineCount() {
             const countEl = document.getElementById('online-count');
+            
             if (countEl) {
                 countEl.textContent = onlineCount;
             }
+            
+            
         }
 
         setInterval(function () {
             try {
                 window.Echo.join('tracemap-presence')
                     .here((users) => {
+                        console.log('Users here:', users);
                         onlineCount = users.length;
                         updateOnlineCount();
                     })
@@ -1763,6 +2025,352 @@
                     startTutorial();
                 });
             }
+
+            // Initialiser le chat
+            initializeChat();
         });
+
+        // Fonction pour initialiser le chat
+        function initializeChat() {
+            const chatToggle = document.getElementById('chat-toggle');
+            const chatWindow = document.getElementById('chat-window');
+            const minimizeChat = document.getElementById('minimize-chat');
+            const chatIcon = document.getElementById('chat-icon');
+            const closeIcon = document.getElementById('close-icon');
+            const chatInput = document.getElementById('chat-input');
+            const sendMessage = document.getElementById('send-message');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatOnlineCount = document.getElementById('chat-online-count');
+
+            let isChatOpen = false;
+
+            /**
+             * Fonction pour basculer l'affichage du chat en mode plein écran
+             * Animation de slide vertical pour une transition fluide
+             */
+            function toggleChat() {
+                isChatOpen = !isChatOpen;
+                if (isChatOpen) {
+                    // Ouvrir le chat en plein écran avec slide vertical
+                    chatWindow.classList.remove('hidden');
+                    chatWindow.style.display = 'flex';
+                    chatWindow.style.transform = 'translateY(100%)';
+                    chatWindow.style.opacity = '0';
+                    chatWindow.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease';
+                    
+                    // Forcer le reflow pour que les styles soient appliqués
+                    chatWindow.offsetHeight;
+                    
+                    // Animer l'ouverture avec un slide vertical et fade in
+                    requestAnimationFrame(() => {
+                        chatWindow.style.transform = 'translateY(0)';
+                        chatWindow.style.opacity = '1';
+                    });
+                    
+                    // Changer les icônes
+                    chatIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                    
+                    // Charger les messages lors de l'ouverture
+                    loadMessages();
+                } else {
+                    // Fermer le chat avec animation slide vers le bas et fade out
+                    chatWindow.style.transition = 'transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19), opacity 0.3s ease';
+                    chatWindow.style.transform = 'translateY(100%)';
+                    chatWindow.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        chatWindow.classList.add('hidden');
+                        chatWindow.style.display = 'none';
+                        chatIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                        // Réinitialiser les styles
+                        chatWindow.style.transform = '';
+                        chatWindow.style.opacity = '';
+                        chatWindow.style.transition = '';
+                    }, 300);
+                }
+            }
+
+            // Événements pour ouvrir/fermer le chat
+            chatToggle.addEventListener('click', toggleChat);
+            minimizeChat.addEventListener('click', toggleChat);
+
+            // Fonction pour charger les messages récents
+            function loadMessages() {
+                fetch('/messages')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Vider la zone de messages
+                            chatMessages.innerHTML = '';
+                            
+                            // Ajouter chaque message
+                            data.messages.forEach(message => {
+                                addMessageToChat(message.name, message.message, false, message.created_at);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des messages:', error);
+                    });
+            }
+
+            // Fonction pour envoyer un message avec animations améliorées
+            function sendChatMessage() {
+                const message = chatInput.value.trim();
+                
+                if (!message) return;
+                
+                // Récupérer ou demander le nom d'utilisateur
+                let userName = localStorage.getItem('chatUserName');
+                if (!userName) {
+                    userName = prompt('Entrez votre nom:') || 'Anonyme';
+                    localStorage.setItem('chatUserName', userName);
+                }
+                
+                // Désactiver le bouton d'envoi et l'input pendant l'envoi
+                sendMessage.disabled = true;
+                chatInput.disabled = true;
+                sendMessage.innerHTML = '<svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                
+                // Ajouter un message temporaire avec animation d'envoi
+                const tempMessageDiv = document.createElement('div');
+                tempMessageDiv.className = 'chat-message mb-4 sending-message';
+                tempMessageDiv.innerHTML = `
+                    <div class="flex items-start justify-end animate-fade-in">
+                        <div class="message-bubble current bg-gradient-to-br from-blue-500 to-blue-600 text-black rounded-2xl px-4 py-3 max-w-xs lg:max-w-sm shadow-lg">
+                            <div class="text-sm leading-relaxed break-words">${message}</div>
+                            <div class="text-xs text-blue-100 mt-2 flex items-center justify-between">
+                                <span>Envoi...</span>
+                                <span class="text-blue-200">⏳</span>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center ml-3 flex-shrink-0 shadow-lg ring-2 ring-white">
+                            <span class="text-white text-sm font-bold">${userName.charAt(0).toUpperCase()}</span>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(tempMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatInput.value = '';
+                
+                // Envoyer le message au serveur
+                fetch('/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        name: userName,
+                        message: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Transformer le message temporaire en message permanent
+                        tempMessageDiv.classList.remove('sending-message');
+                        tempMessageDiv.classList.add('message-sent');
+                        
+                        // Mettre à jour le contenu pour enlever "Envoi..." et ajouter l'heure
+                        const timeDiv = tempMessageDiv.querySelector('.text-xs');
+                        const currentTime = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                        timeDiv.innerHTML = `
+                            <span>${currentTime}</span>
+                            <span class="text-green-200">✓</span>
+                        `;
+                        
+                        console.log('Message envoyé avec succès');
+                        
+                        // Programmer la suppression du message temporaire après 30 secondes si Pusher ne l'a pas remplacé
+                        setTimeout(() => {
+                            if (tempMessageDiv.parentNode) {
+                                // Vérifier si un message identique existe déjà (venant de Pusher)
+                                const existingMessages = chatMessages.querySelectorAll('.chat-message');
+                                let duplicateFound = false;
+                                
+                                existingMessages.forEach(msg => {
+                                    if (msg !== tempMessageDiv && msg.textContent.includes(message)) {
+                                        duplicateFound = true;
+                                    }
+                                });
+                                
+                                if (duplicateFound) {
+                                    tempMessageDiv.remove();
+                                }
+                            }
+                        }, 30000);
+                    } else {
+                        // Supprimer le message temporaire en cas d'erreur
+                        tempMessageDiv.remove();
+                        showNotification('Erreur lors de l\'envoi du message: ' + data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    // Supprimer le message temporaire en cas d'erreur
+                    tempMessageDiv.remove();
+                    console.error('Erreur lors de l\'envoi du message:', error);
+                    showNotification('Erreur lors de l\'envoi du message', 'error');
+                })
+                .finally(() => {
+                    // Réactiver le bouton d'envoi et l'input
+                    sendMessage.disabled = false;
+                    chatInput.disabled = false;
+                    sendMessage.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>';
+                });
+            }
+            
+            // Fonction pour afficher des notifications modernes
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium animate-fade-in ${
+                    type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateY(-20px)';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+
+            // Événements pour envoyer des messages
+            sendMessage.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+
+            // Fonction pour ajouter un message au chat avec animations améliorées
+            function addMessageToChat(user, message, isCurrentUser = false, timestamp = null) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-message mb-4';
+                
+                // Utiliser le timestamp fourni ou l'heure actuelle
+                let time;
+                if (timestamp) {
+                    const date = new Date(timestamp);
+                    time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                }
+                
+                // Générer une couleur d'avatar basée sur le nom d'utilisateur
+                const avatarColors = [
+                    'from-blue-400 to-blue-600',
+                    'from-purple-400 to-purple-600', 
+                    'from-pink-400 to-pink-600',
+                    'from-indigo-400 to-indigo-600',
+                    'from-cyan-400 to-cyan-600',
+                    'from-teal-400 to-teal-600'
+                ];
+                const colorIndex = user.charCodeAt(0) % avatarColors.length;
+                const avatarColor = avatarColors[colorIndex];
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start ${isCurrentUser ? 'justify-end' : ''} animate-fade-in">
+                        ${!isCurrentUser ? `
+                            <div class="w-10 h-10 bg-gradient-to-br ${avatarColor} rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg ring-2 ring-white">
+                                <span class="text-white text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
+                            </div>
+                        ` : ''}
+                        <div class="message-bubble ${isCurrentUser ? 'current' : 'other'} ${isCurrentUser ? 'bg-gradient-to-br from-green-500 to-green-600 text-white' : 'bg-white border border-gray-100'} rounded-2xl px-4 py-3 max-w-xs lg:max-w-sm shadow-lg">
+                            ${!isCurrentUser ? `<div class="font-semibold text-xs text-green-600 mb-1 flex items-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                                ${user}
+                            </div>` : ''}
+                            <div class="text-sm leading-relaxed break-words">${message}</div>
+                            <div class="text-xs ${isCurrentUser ? 'text-green-100' : 'text-gray-400'} mt-2 flex items-center justify-between">
+                                <span>${time}</span>
+                                ${isCurrentUser ? '<span class="text-green-200">✓</span>' : ''}
+                            </div>
+                        </div>
+                        ${isCurrentUser ? `
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center ml-3 flex-shrink-0 shadow-lg ring-2 ring-white">
+                                <span class="text-white text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `
+                
+                // Supprimer le message de bienvenue s'il existe
+                const welcomeMessage = chatMessages.querySelector('.text-center');
+                if (welcomeMessage) {
+                    welcomeMessage.remove();
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Synchroniser le compteur d'utilisateurs en ligne du chat avec celui de la carte
+            function updateChatOnlineCount() {
+                const mapOnlineCount = document.getElementById('online-count');
+                if (mapOnlineCount && chatOnlineCount) {
+                    const count = mapOnlineCount.textContent.match(/\d+/);
+                    if (count) {
+                        chatOnlineCount.textContent = `${count[0]} en ligne`;
+                    }
+                }
+            }
+
+            // Observer les changements du compteur de la carte
+            const mapOnlineCount = document.getElementById('online-count');
+            if (mapOnlineCount) {
+                const observer = new MutationObserver(updateChatOnlineCount);
+                observer.observe(mapOnlineCount, { childList: true, subtree: true });
+                updateChatOnlineCount(); // Mise à jour initiale
+            }
+
+           
+          
+
+            // Recharger les messages toutes les 5 minutes en cas de problème de connexion
+           
+        }
+
+       setTimeout(function(){
+            try {
+                  console.log('Nouveau message logs:');
+                  window.Echo.channel('chat-messages')
+                    .listen('new-message', (e) => {
+                        console.log('Nouveau message reçu:', e.message);
+                        
+                        // Vérifier si c'est notre propre message (pour éviter les doublons)
+                        const currentUserName = localStorage.getItem('chatUserName');
+                        const isOwnMessage = currentUserName && e.message.name === currentUserName;
+                        
+                        if (isOwnMessage) {
+                            // Supprimer le message temporaire s'il existe
+                            const chatMessages = document.getElementById('chat-messages');
+                            const tempMessages = chatMessages.querySelectorAll('.sending-message, .message-sent');
+                            tempMessages.forEach(tempMsg => {
+                                if (tempMsg.textContent.includes(e.message.message)) {
+                                    tempMsg.remove();
+                                }
+                            });
+                        }
+                        
+                        // Ajouter le nouveau message au chat
+                        addMessageToChat(
+                            e.message.name, 
+                            e.message.message, 
+                            isOwnMessage, 
+                            e.message.created_at
+                        );
+                    });
+            } catch (error) {
+                console.error('Chat-messages error:', error);
+            }
+       
+       },2000)
+
     </script>
 @endsection

@@ -12,7 +12,9 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Broadcast::routes(['middleware' => ['web']]);
+        // Utiliser une route personnalisée pour l'authentification des canaux de broadcasting
+        // Les routes par défaut sont désactivées car nous avons créé notre propre route
+        // Broadcast::routes(['middleware' => ['web']]);
 
         require base_path('routes/channels.php');
     }}

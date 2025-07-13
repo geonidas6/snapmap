@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\TracemapController;
 use App\Http\Controllers\AdminController;
-
+use Illuminate\Support\Facades\Auth;
 
 
 //Route::get('/', function () {
@@ -23,6 +23,49 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route personnalisée pour l'authentification des canaux de broadcasting
+Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
+    // Récupérer le nom du canal depuis la requête
+    $channelName = $request->input('channel_name');
+    
+    if ($channelName === 'presence-tracemap-presence') {
+        // Toujours autoriser l'accès au canal de présence
+        if (Auth::check()) {
+            $user = Auth::user();
+            $userData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'type' => 'user'
+            ];
+        } else {
+            // Pour les utilisateurs invités
+            $sessionId = session()->getId();
+            $guestId = 'guest-' . substr(md5($sessionId), 0, 8);
+            $userData = [
+                'id' => $guestId,
+                'name' => 'Invité',
+                'type' => 'guest'
+            ];
+        }
+        
+        // Générer la signature d'authentification pour Pusher
+        $pusher = new \Pusher\Pusher(
+            config('broadcasting.connections.pusher.key'),
+            config('broadcasting.connections.pusher.secret'),
+            config('broadcasting.connections.pusher.app_id'),
+            config('broadcasting.connections.pusher.options')
+        );
+        
+        $socketId = $request->input('socket_id');
+        $auth = $pusher->authorizePresenceChannel($channelName, $socketId, $userData['id'], $userData);
+       
+        return $auth;
+       
+    }
+    
+    return response()->json(['error' => 'Unauthorized'], 403);
+})->name('broadcasting.auth');
 
 // Admin routes
 Route::middleware('auth')->group(function () {
@@ -56,6 +99,10 @@ Route::post('/tracemaps', [TracemapController::class, 'store'])->name('tracemap.
 
 // Route pour le téléversement AJAX
 Route::post('/tracemaps/ajax', [TracemapController::class, 'storeAjax'])->name('tracemap.store.ajax');
+
+// Routes pour la gestion des messages du chat
+Route::get('/messages', [TracemapController::class, 'getMessages'])->name('messages.get');
+Route::post('/messages', [TracemapController::class, 'storeMessage'])->name('messages.store');
 
 
 

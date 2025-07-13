@@ -11,7 +11,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Enregistrer le middleware personnalisé pour l'authentification des canaux de broadcasting
+        $middleware->alias([
+            'broadcast.auth' => \App\Http\Middleware\BroadcastAuth::class,
+        ]);
+        
+        // Exclure les routes de broadcasting de la vérification CSRF
+        $middleware->validateCsrfTokens(except: [
+            'broadcasting/auth',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
