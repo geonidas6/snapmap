@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Enregistrer le middleware personnalisé pour l'authentification des canaux de broadcasting
         $middleware->alias([
             'broadcast.auth' => \App\Http\Middleware\BroadcastAuth::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
         
         // Exclure les routes de broadcasting de la vérification CSRF

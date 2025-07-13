@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use App\Models\Tracemap;
+use App\Models\Message;
 
 class AdminController extends Controller
 {
@@ -131,5 +133,126 @@ class AdminController extends Controller
 
         // Afficher la page de maintenance avec le secret
         return view('maintenance', ['secret' => $secret]);
+    }
+    
+    /**
+     * Affiche la liste des tracemaps pour l'administration
+     */
+    public function tracemaps(Request $request)
+    {
+        // Récupérer les filtres de la requête
+        $search = $request->input('search', '');
+        
+        // Construire la requête avec les filtres
+        $query = Tracemap::with('media');
+        
+        // Appliquer le filtre de recherche si présent
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', "%{$search}%")
+                  ->orWhere('latitude', 'like', "%{$search}%")
+                  ->orWhere('longitude', 'like', "%{$search}%");
+            });
+        }
+        
+        // Récupérer les tracemaps paginés
+        $tracemaps = $query->orderBy('created_at', 'desc')
+                          ->paginate(10);
+        
+        return view('admin.tracemaps', compact('tracemaps', 'search'));
+    }
+    
+    /**
+     * Supprime les tracemaps sélectionnés
+     */
+    public function deleteTracemaps(Request $request)
+    {
+        $ids = $request->input('tracemap_ids', []);
+        
+        if (empty($ids)) {
+            return redirect()->route('admin.tracemaps')
+                             ->with('error', 'Aucun tracemap sélectionné.');
+        }
+        
+        // Supprimer les tracemaps et leurs médias associés
+        $tracemaps = Tracemap::whereIn('id', $ids)->get();
+        
+        foreach ($tracemaps as $tracemap) {
+            // Supprimer les fichiers médias associés
+            foreach ($tracemap->media as $media) {
+                if ($media->file_path) {
+                    $filePath = storage_path('app/public/' . $media->file_path);
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                }
+            }
+            
+            // Supprimer le tracemap (les médias seront supprimés en cascade)
+            $tracemap->delete();
+        }
+        
+        return redirect()->route('admin.tracemaps')
+                         ->with('success', count($ids) . ' tracemap(s) supprimé(s) avec succès.');
+    }
+    
+    /**
+     * Affiche la liste des messages pour l'administration
+     */
+    public function messages(Request $request)
+    {
+        // Récupérer les filtres de la requête
+        $search = $request->input('search', '');
+        
+        // Construire la requête avec les filtres
+        $query = Message::query();
+        
+        // Appliquer le filtre de recherche si présent
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+        
+        // Récupérer les messages paginés
+        $messages = $query->orderBy('created_at', 'desc')
+                         ->paginate(10);
+        
+        return view('admin.messages', compact('messages', 'search'));
+    }
+    
+    /**
+     * Supprime les messages sélectionnés
+     */
+    public function deleteMessages(Request $request)
+    {
+        $ids = $request->input('message_ids', []);
+        
+        if (empty($ids)) {
+            return redirect()->route('admin.messages')
+                             ->with('error', 'Aucun message sélectionné.');
+        }
+        
+        // Supprimer les messages
+        Message::whereIn('id', $ids)->delete();
+        
+        return redirect()->route('admin.messages')
+                         ->with('success', count($ids) . ' message(s) supprimé(s) avec succès.');
+    }
+    
+    /**
+     * Supprime tous les messages
+     */
+    public function deleteAllMessages()
+    {
+        // Compter le nombre de messages avant suppression
+        $count = Message::count();
+        
+        // Supprimer tous les messages
+        Message::truncate();
+        
+        return redirect()->route('admin.messages')
+                         ->with('success', $count . ' message(s) supprimé(s) avec succès.');
     }
 }

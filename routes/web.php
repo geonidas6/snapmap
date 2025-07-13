@@ -68,10 +68,10 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
 })->name('broadcasting.auth');
 
 // Admin routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware([ 'verified'])->name('dashboard');
+    })->name('dashboard');
 
     // Routes pour le mode maintenance
     Route::post('/maintenance/on', [AdminController::class, 'enableMaintenance'])->name('admin.maintenance.on');
@@ -79,6 +79,15 @@ Route::middleware('auth')->group(function () {
 
     // Route pour réinitialiser la base de données
     Route::post('/admin/reset', [AdminController::class, 'resetDatabase'])->name('admin.reset');
+    
+    // Routes pour la gestion des tracemaps
+    Route::get('/admin/tracemaps', [AdminController::class, 'tracemaps'])->name('admin.tracemaps');
+    Route::post('/admin/tracemaps/delete', [AdminController::class, 'deleteTracemaps'])->name('admin.tracemaps.delete');
+    
+    // Routes pour la gestion des messages
+    Route::get('/admin/messages', [AdminController::class, 'messages'])->name('admin.messages');
+    Route::post('/admin/messages/delete', [AdminController::class, 'deleteMessages'])->name('admin.messages.delete');
+    Route::post('/admin/messages/delete-all', [AdminController::class, 'deleteAllMessages'])->name('admin.messages.delete.all');
 });
 
 // Route pour le mode maintenance

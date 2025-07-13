@@ -47,6 +47,26 @@
             <p class="text-sm text-gray-600">Attention : cette action supprimera toutes les données et réinitialisera la base de données.</p>
         </div>
     </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Gestion des Tracemaps -->
+        <div class="border rounded-lg p-4 bg-gray-50">
+            <h2 class="text-lg font-semibold mb-4">Gestion des Tracemaps</h2>
+            <p class="mb-4 text-gray-600">Gérez tous les tracemaps de l'application. Vous pouvez les filtrer et les supprimer.</p>
+            <a href="{{ route('admin.tracemaps') }}" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
+                Accéder à la gestion des tracemaps
+            </a>
+        </div>
+
+        <!-- Gestion des Messages -->
+        <div class="border rounded-lg p-4 bg-gray-50">
+            <h2 class="text-lg font-semibold mb-4">Gestion des Messages</h2>
+            <p class="mb-4 text-gray-600">Gérez tous les messages de l'application. Vous pouvez les filtrer et les supprimer.</p>
+            <a href="{{ route('admin.messages') }}" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
+                Accéder à la gestion des messages
+            </a>
+        </div>
+    </div>
 
     <script>
         function copyToClipboard() {
