@@ -2140,14 +2140,14 @@
                 tempMessageDiv.innerHTML = `
                     <div class="flex items-start justify-end animate-fade-in">
                         <div class="message-bubble current bg-gradient-to-br from-blue-500 to-blue-600 text-black rounded-2xl px-4 py-3 max-w-xs lg:max-w-sm shadow-lg">
-                            <div class="text-sm leading-relaxed break-words">${message}</div>
+                            <div class="text-black text-sm leading-relaxed break-words">${message}</div>
                             <div class="text-xs text-blue-100 mt-2 flex items-center justify-between">
                                 <span>Envoi...</span>
                                 <span class="text-blue-200">⏳</span>
                             </div>
                         </div>
                         <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center ml-3 flex-shrink-0 shadow-lg ring-2 ring-white">
-                            <span class="text-white text-sm font-bold">${userName.charAt(0).toUpperCase()}</span>
+                            <span class="text-black text-sm font-bold">${userName.charAt(0).toUpperCase()}</span>
                         </div>
                     </div>
                 `;
@@ -2277,24 +2277,24 @@
                 messageDiv.innerHTML = `
                     <div class="flex items-start ${isCurrentUser ? 'justify-end' : ''} animate-fade-in">
                         ${!isCurrentUser ? `
-                            <div class="w-10 h-10 bg-gradient-to-br ${avatarColor} rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg ring-2 ring-white">
-                                <span class="text-white text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
+                            <div class="aspect-square w-10 h-10 bg-gradient-to-br ${avatarColor} rounded-full flex items-center justify-center mr-3 flex-shrink-0 shadow-lg ring-2 ring-white">
+                                <span class="text-black text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
                             </div>
                         ` : ''}
-                        <div class="message-bubble ${isCurrentUser ? 'current' : 'other'} ${isCurrentUser ? 'bg-gradient-to-br from-green-500 to-green-600 text-white' : 'bg-white border border-gray-100'} rounded-2xl px-4 py-3 max-w-xs lg:max-w-sm shadow-lg">
+                        <div class="message-bubble ${isCurrentUser ? 'current' : 'other'} ${isCurrentUser ? 'bg-gradient-to-br from-green-500 to-green-600 text-black' : 'bg-white border border-gray-100'} rounded-2xl px-4 py-3 max-w-xs lg:max-w-sm shadow-lg">
                             ${!isCurrentUser ? `<div class="font-semibold text-xs text-green-600 mb-1 flex items-center">
                                 <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
                                 ${user}
                             </div>` : ''}
-                            <div class="text-sm leading-relaxed break-words">${message}</div>
-                            <div class="text-xs ${isCurrentUser ? 'text-green-100' : 'text-gray-400'} mt-2 flex items-center justify-between">
+                            <div class="text-black text-sm leading-relaxed break-words">${message}</div>
+                            <div class="text-xs ${isCurrentUser ? 'text-green-100' : 'text-black-400'} mt-2 flex items-center justify-between">
                                 <span>${time}</span>
                                 ${isCurrentUser ? '<span class="text-green-200">✓</span>' : ''}
                             </div>
                         </div>
                         ${isCurrentUser ? `
                             <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center ml-3 flex-shrink-0 shadow-lg ring-2 ring-white">
-                                <span class="text-white text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
+                                <span class="text-black aspect-square  text-sm font-bold">${user.charAt(0).toUpperCase()}</span>
                             </div>
                         ` : ''}
                     </div>
@@ -2332,45 +2332,47 @@
            
           
 
-            // Recharger les messages toutes les 5 minutes en cas de problème de connexion
+           setTimeout(function(){
+                try {
+                    // Écouter les événements Pusher pour les mises à jour de tracemap en temps réel via Laravel Echo
+                    console.log('Configuration de l\'écoute des chat-messages via Echo...',window.Echo);
+                    window.Echo.channel('chat-messages')
+                        .listen('.new-message', (e) => {
+                            console.log('Nouveau message reçu:', e.message);
+                            
+                            // Vérifier si c'est notre propre message (pour éviter les doublons)
+                            const currentUserName = localStorage.getItem('chatUserName');
+                            const isOwnMessage = currentUserName && e.message.name === currentUserName;
+                            
+                            if (isOwnMessage) {
+                                // Supprimer le message temporaire s'il existe
+                                const chatMessages = document.getElementById('chat-messages');
+                                const tempMessages = chatMessages.querySelectorAll('.sending-message, .message-sent');
+                                tempMessages.forEach(tempMsg => {
+                                    if (tempMsg.textContent.includes(e.message.message)) {
+                                        tempMsg.remove();
+                                    }
+                                });
+                            }
+                            
+                            // Ajouter le nouveau message au chat
+                            
+                            addMessageToChat(
+                                e.message.name, 
+                                e.message.message, 
+                                isOwnMessage, 
+                                e.message.created_at
+                            );
+                        });
+                    } catch (error) {
+                        console.error('Chat-messages error:', error);
+                    }
+       
+            },2000)
            
         }
 
-       setTimeout(function(){
-            try {
-                  console.log('Nouveau message logs:');
-                  window.Echo.channel('chat-messages')
-                    .listen('new-message', (e) => {
-                        console.log('Nouveau message reçu:', e.message);
-                        
-                        // Vérifier si c'est notre propre message (pour éviter les doublons)
-                        const currentUserName = localStorage.getItem('chatUserName');
-                        const isOwnMessage = currentUserName && e.message.name === currentUserName;
-                        
-                        if (isOwnMessage) {
-                            // Supprimer le message temporaire s'il existe
-                            const chatMessages = document.getElementById('chat-messages');
-                            const tempMessages = chatMessages.querySelectorAll('.sending-message, .message-sent');
-                            tempMessages.forEach(tempMsg => {
-                                if (tempMsg.textContent.includes(e.message.message)) {
-                                    tempMsg.remove();
-                                }
-                            });
-                        }
-                        
-                        // Ajouter le nouveau message au chat
-                        addMessageToChat(
-                            e.message.name, 
-                            e.message.message, 
-                            isOwnMessage, 
-                            e.message.created_at
-                        );
-                    });
-            } catch (error) {
-                console.error('Chat-messages error:', error);
-            }
-       
-       },2000)
+      
 
     </script>
 @endsection
