@@ -2,6 +2,59 @@
 
 @section('content')
     <style>
+        /* Styles pour le chaton animé */
+        #helper-cat {
+            position: fixed;
+            bottom: 20px;
+            left: -100px; /* Commence en dehors de l'écran */
+            z-index: 1001;
+            transition: left 20s linear;
+            cursor: pointer;
+        }
+
+        #helper-cat img {
+            width: 80px;
+            height: auto;
+            animation: walk 1s steps(8) infinite, blink 3s infinite;
+        }
+
+        #cat-bubble {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            width: 220px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        #cat-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        @keyframes walk {
+            0% { background-position: 0 0; }
+            100% { background-position: -800px 0; } /* 8 frames * 100px width */
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
         /* Styles pour Intro.js */
         .introjs-tooltip {
             border-radius: 12px !important;
@@ -179,45 +232,46 @@
 
         /* Styles pour le chat moderne */
         @keyframes fade-in {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px); 
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        
+
         .animate-fade-in {
             animation: fade-in 0.3s ease-out;
         }
-        
+
         /* Scrollbar personnalisée pour le chat */
         #chat-messages::-webkit-scrollbar {
             width: 6px;
         }
-        
+
         #chat-messages::-webkit-scrollbar-track {
             background: #f1f5f9;
             border-radius: 3px;
         }
-        
+
         #chat-messages::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
         }
-        
+
         #chat-messages::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
-        
+
         /* Animation pour le panneau de chat */
         #chat-window {
             backdrop-filter: blur(10px);
-            /*height: 51vh !important;*/
+            height: 51vh !important;
+            position:relative;
         }
-        
+
         /* Effet de survol pour les messages */
         .chat-message:hover {
             transform: translateY(-1px);
@@ -564,12 +618,12 @@
 
         </div>
     </div>
-    
+
 
     <!-- Compteur d'utilisateurs en ligne séparé -->
       <div class="map-ui-online-count"
-         data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
-         data-step="2">
+         data-intro="Ici vous voir le nombre d'utilisateurs en ligne."
+         data-step="3">
         <div class="flex items-center justify-between">
 
              <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -579,7 +633,15 @@
 
         </div>
     </div>
-   
+
+
+    <!-- Chaton animé -->
+    <div id="helper-cat">
+        <div id="cat-bubble"></div>
+        <img src="{{asset('images/chat-jouant-unscreen.gif')}}" alt="Chat animé">
+
+    </div>
+
     <!-- Le bouton flottant a été retiré, l'ajout se fait maintenant directement en cliquant sur la carte -->
 
     <!-- Modal pour téléverser des médias après un clic sur la carte (style Tracemapchat) -->
@@ -696,7 +758,12 @@
     <!-- Chat rétractable -->
     <div id="chat-container" class="fixed bottom-4 left-4 z-50">
         <!-- Bouton pour ouvrir/fermer le chat -->
-        <div id="chat-toggle" class="bg-blue-500 hover:bg-green-600 text-white rounded-full p-3 cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105">
+        <div id="chat-toggle"
+
+             data-intro="Cliquez ici pour ouvrir le chat."
+             data-step="7"
+
+             class="bg-blue-500 hover:bg-green-600 text-white rounded-full p-3 cursor-pointer shadow-lg transition-all duration-300 transform hover:scale-105">
             <svg id="chat-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.906-1.289L3 21l2.289-5.094A9.863 9.863 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
             </svg>
@@ -704,7 +771,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </div>
-        
+
         <!-- Fenêtre de chat - Mode plein écran -->
         <div id="chat-window" class="hidden fixed inset-0 bg-white flex flex-col z-50">
             <!-- En-tête du chat avec compteur d'utilisateurs -->
@@ -726,7 +793,7 @@
                     </svg>
                 </button>
             </div>
-            
+
             <!-- Zone des messages -->
             <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
                 <!-- Messages du chat seront ajoutés ici -->
@@ -734,7 +801,7 @@
                     Bienvenue dans le chat ! Commencez une conversation...
                 </div>
             </div>
-            
+
             <!-- Zone de saisie -->
             <div class="p-4 border-t border-gray-200 bg-white shadow-inner">
                 <div class="flex items-center space-x-2">
@@ -780,7 +847,7 @@
         const map = L.map('map', {
             zoomControl: false, // Désactiver les contrôles de zoom par défaut pour les ajouter manuellement
             attributionControl: true
-        }).setView([48.8566, 2.3522], 13);
+        }).setView([48.8566, 2.3522], 3);
 
         // Définition des différentes couches de carte
         const baseMaps = {
@@ -796,7 +863,7 @@
         };
 
         // Ajouter la couche par défaut à la carte
-        baseMaps["Standard"].addTo(map);
+        baseMaps["Satellite"].addTo(map);
 
         // Ajouter le contrôle de couches
         const layersControl = L.control.layers(baseMaps, null, {position: 'topright'}).addTo(map);
@@ -869,6 +936,7 @@
         const styleElement = document.createElement('style');
         styleElement.textContent = customLocateStyles;
         document.head.appendChild(styleElement);
+
 
         // Ajouter le contrôle de localisation à la carte en utilisant le plugin Leaflet.Locate
         const lc = L.control.locate({
@@ -1522,36 +1590,36 @@
          * Met à jour les compteurs d'utilisateurs en ligne
          * Synchronise le compteur principal et le compteur séparé
          */
-        function updateOnlineCount() {
+        function updateOnlineCount(count) {
+            onlineCount = count;
             const countEl = document.getElementById('online-count');
-            
+            const chatCountEl = document.getElementById('chat-online-count');
+
             if (countEl) {
                 countEl.textContent = onlineCount;
             }
-            
-            
+            if (chatCountEl) {
+                chatCountEl.textContent = `${onlineCount} en ligne`;
+            }
         }
 
-        setInterval(function () {
+
+        setTimeout(() => {
             try {
                 window.Echo.join('tracemap-presence')
                     .here((users) => {
-                        console.log('Users here:', users);
-                        onlineCount = users.length;
-                        updateOnlineCount();
+                        updateOnlineCount(users.length);
                     })
-                    .joining(() => {
-                        onlineCount++;
-                        updateOnlineCount();
+                    .joining((user) => {
+                        updateOnlineCount(onlineCount + 1);
                     })
-                    .leaving(() => {
-                        onlineCount = Math.max(onlineCount - 1, 0);
-                        updateOnlineCount();
+                    .leaving((user) => {
+                        updateOnlineCount(Math.max(0, onlineCount - 1));
                     });
             } catch (error) {
                 console.error('Presence channel error:', error);
             }
-        },2000);
+        }, 2000);
 
 
         // Fonction pour créer un nouveau marqueur après téléversement
@@ -1965,6 +2033,38 @@
             });
         }
 
+        // Chaton animé
+        const cat = document.getElementById('helper-cat');
+        const catBubble = document.getElementById('cat-bubble');
+        const messages = [
+            "Cliquez sur un point de la carte pour ajouter un média !",
+            "Cliquez sur l'icône de chat pour discuter avec d'autres utilisateurs.",
+            "Miaou ! C'est une belle journée pour explorer la carte.",
+            "N'oubliez pas que les tracemaps disparaissent après 24 heures."
+        ];
+
+
+        function moveCat() {
+            const screenWidth = window.innerWidth;
+            const catWidth = cat.offsetWidth;
+            cat.style.left = `${screenWidth + catWidth}px`;
+
+            setTimeout(() => {
+                cat.style.left = `-${catWidth}px`;
+                setTimeout(moveCat, 20000); // Redémarre l'animation après 20s
+            }, 20000); // 20s pour traverser l'écran
+        }
+
+        function showRandomMessage() {
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            catBubble.textContent = messages[randomIndex];
+        }
+
+        moveCat();
+        setInterval(showRandomMessage, 8000); // Change le message toutes les 8 secondes
+        showRandomMessage(); // Affiche un message au début
+
+
         // Fonction pour vérifier si le tutoriel a déjà été affiché
         function hasSeenTutorial() {
             return localStorage.getItem('tracemap_tutorial_seen') === 'true';
@@ -2048,6 +2148,7 @@
              * Fonction pour basculer l'affichage du chat en mode plein écran
              * Animation de slide vertical pour une transition fluide
              */
+
             function toggleChat() {
                 isChatOpen = !isChatOpen;
                 if (isChatOpen) {
@@ -2057,20 +2158,20 @@
                     chatWindow.style.transform = 'translateY(100%)';
                     chatWindow.style.opacity = '0';
                     chatWindow.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease';
-                    
+
                     // Forcer le reflow pour que les styles soient appliqués
                     chatWindow.offsetHeight;
-                    
+
                     // Animer l'ouverture avec un slide vertical et fade in
                     requestAnimationFrame(() => {
                         chatWindow.style.transform = 'translateY(0)';
                         chatWindow.style.opacity = '1';
                     });
-                    
+
                     // Changer les icônes
                     chatIcon.classList.add('hidden');
                     closeIcon.classList.remove('hidden');
-                    
+
                     // Charger les messages lors de l'ouverture
                     loadMessages();
                 } else {
@@ -2078,7 +2179,7 @@
                     chatWindow.style.transition = 'transform 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19), opacity 0.3s ease';
                     chatWindow.style.transform = 'translateY(100%)';
                     chatWindow.style.opacity = '0';
-                    
+
                     setTimeout(() => {
                         chatWindow.classList.add('hidden');
                         chatWindow.style.display = 'none';
@@ -2104,7 +2205,7 @@
                         if (data.success) {
                             // Vider la zone de messages
                             chatMessages.innerHTML = '';
-                            
+
                             // Ajouter chaque message
                             data.messages.forEach(message => {
                                 addMessageToChat(message.name, message.message, false, message.created_at);
@@ -2119,21 +2220,21 @@
             // Fonction pour envoyer un message avec animations améliorées
             function sendChatMessage() {
                 const message = chatInput.value.trim();
-                
+
                 if (!message) return;
-                
+
                 // Récupérer ou demander le nom d'utilisateur
                 let userName = localStorage.getItem('chatUserName');
                 if (!userName) {
                     userName = prompt('Entrez votre nom:') || 'Anonyme';
                     localStorage.setItem('chatUserName', userName);
                 }
-                
+
                 // Désactiver le bouton d'envoi et l'input pendant l'envoi
                 sendMessage.disabled = true;
                 chatInput.disabled = true;
                 sendMessage.innerHTML = '<svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-                
+
                 // Ajouter un message temporaire avec animation d'envoi
                 const tempMessageDiv = document.createElement('div');
                 tempMessageDiv.className = 'chat-message mb-4 sending-message';
@@ -2151,11 +2252,11 @@
                         </div>
                     </div>
                 `;
-                
+
                 chatMessages.appendChild(tempMessageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 chatInput.value = '';
-                
+
                 // Envoyer le message au serveur
                 fetch('/messages', {
                     method: 'POST',
@@ -2174,7 +2275,7 @@
                         // Transformer le message temporaire en message permanent
                         tempMessageDiv.classList.remove('sending-message');
                         tempMessageDiv.classList.add('message-sent');
-                        
+
                         // Mettre à jour le contenu pour enlever "Envoi..." et ajouter l'heure
                         const timeDiv = tempMessageDiv.querySelector('.text-xs');
                         const currentTime = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
@@ -2182,22 +2283,22 @@
                             <span>${currentTime}</span>
                             <span class="text-green-200">✓</span>
                         `;
-                        
+
                         console.log('Message envoyé avec succès');
-                        
+
                         // Programmer la suppression du message temporaire après 30 secondes si Pusher ne l'a pas remplacé
                         setTimeout(() => {
                             if (tempMessageDiv.parentNode) {
                                 // Vérifier si un message identique existe déjà (venant de Pusher)
                                 const existingMessages = chatMessages.querySelectorAll('.chat-message');
                                 let duplicateFound = false;
-                                
+
                                 existingMessages.forEach(msg => {
                                     if (msg !== tempMessageDiv && msg.textContent.includes(message)) {
                                         duplicateFound = true;
                                     }
                                 });
-                                
+
                                 if (duplicateFound) {
                                     tempMessageDiv.remove();
                                 }
@@ -2222,7 +2323,7 @@
                     sendMessage.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>';
                 });
             }
-            
+
             // Fonction pour afficher des notifications modernes
             function showNotification(message, type = 'info') {
                 const notification = document.createElement('div');
@@ -2230,9 +2331,9 @@
                     type === 'error' ? 'bg-red-500' : type === 'success' ? 'bg-green-500' : 'bg-blue-500'
                 }`;
                 notification.textContent = message;
-                
+
                 document.body.appendChild(notification);
-                
+
                 setTimeout(() => {
                     notification.style.opacity = '0';
                     notification.style.transform = 'translateY(-20px)';
@@ -2252,7 +2353,7 @@
             function addMessageToChat(user, message, isCurrentUser = false, timestamp = null) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'chat-message mb-4';
-                
+
                 // Utiliser le timestamp fourni ou l'heure actuelle
                 let time;
                 if (timestamp) {
@@ -2261,11 +2362,11 @@
                 } else {
                     time = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                 }
-                
+
                 // Générer une couleur d'avatar basée sur le nom d'utilisateur
                 const avatarColors = [
                     'from-blue-400 to-blue-600',
-                    'from-purple-400 to-purple-600', 
+                    'from-purple-400 to-purple-600',
                     'from-pink-400 to-pink-600',
                     'from-indigo-400 to-indigo-600',
                     'from-cyan-400 to-cyan-600',
@@ -2273,7 +2374,7 @@
                 ];
                 const colorIndex = user.charCodeAt(0) % avatarColors.length;
                 const avatarColor = avatarColors[colorIndex];
-                
+
                 messageDiv.innerHTML = `
                     <div class="flex items-start ${isCurrentUser ? 'justify-end' : ''} animate-fade-in">
                         ${!isCurrentUser ? `
@@ -2299,13 +2400,13 @@
                         ` : ''}
                     </div>
                 `
-                
+
                 // Supprimer le message de bienvenue s'il existe
                 const welcomeMessage = chatMessages.querySelector('.text-center');
                 if (welcomeMessage) {
                     welcomeMessage.remove();
                 }
-                
+
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
@@ -2315,6 +2416,7 @@
                 const mapOnlineCount = document.getElementById('online-count');
                 if (mapOnlineCount && chatOnlineCount) {
                     const count = mapOnlineCount.textContent.match(/\d+/);
+                    console.log('Compteur de personnes en ligne:', count);
                     if (count) {
                         chatOnlineCount.textContent = `${count[0]} en ligne`;
                     }
@@ -2329,8 +2431,8 @@
                 updateChatOnlineCount(); // Mise à jour initiale
             }
 
-           
-          
+
+
 
            setTimeout(function(){
                 try {
@@ -2339,11 +2441,11 @@
                     window.Echo.channel('chat-messages')
                         .listen('.new-message', (e) => {
                             console.log('Nouveau message reçu:', e.message);
-                            
+
                             // Vérifier si c'est notre propre message (pour éviter les doublons)
                             const currentUserName = localStorage.getItem('chatUserName');
                             const isOwnMessage = currentUserName && e.message.name === currentUserName;
-                            
+
                             if (isOwnMessage) {
                                 // Supprimer le message temporaire s'il existe
                                 const chatMessages = document.getElementById('chat-messages');
@@ -2354,25 +2456,25 @@
                                     }
                                 });
                             }
-                            
+
                             // Ajouter le nouveau message au chat
-                            
+
                             addMessageToChat(
-                                e.message.name, 
-                                e.message.message, 
-                                isOwnMessage, 
+                                e.message.name,
+                                e.message.message,
+                                isOwnMessage,
                                 e.message.created_at
                             );
                         });
                     } catch (error) {
                         console.error('Chat-messages error:', error);
                     }
-       
+
             },2000)
-           
+
         }
 
-      
+
 
     </script>
 @endsection

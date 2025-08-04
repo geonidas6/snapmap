@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -13,6 +13,7 @@
     <meta name="msapplication-navbutton-color" content="#2563eb">
     <meta name="msapplication-starturl" content="/?source=pwa">
     <meta name="format-detection" content="telephone=no">
+    <meta name="google" content="notranslate" />
     <title>TraceMap - Partagez vos moments géolocalisés</title>
 
     <!-- iOS PWA specific -->
