@@ -22,10 +22,10 @@ return [
     'manifest' => [
         'name' => 'TraceMap',
         'short_name' => 'TraceMap',
-        'background_color' => '#2563eb',
+        'background_color' => '#ffffff',
         'display' => 'standalone',
         'description' => 'Partagez vos moments géolocalisés',
-        'theme_color' => '#2563eb',
+        'theme_color' => '#ffffff',
         'icons' => [
             [
                 'src' => 'logo.png',

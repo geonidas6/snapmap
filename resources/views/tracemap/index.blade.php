@@ -12,7 +12,8 @@
         /* Styles pour le chaton animé */
         #helper-cat {
             position: fixed;
-            bottom: 20px;
+            /*bottom: 20px;*/
+            top: 100px;
             left: -100px; /* Commence en dehors de l'écran */
             z-index: 1001;
             transition: left 20s linear;
@@ -532,8 +533,8 @@
 
         .map-ui-online-count {
             position: absolute;
-            top: 20px;
-            left: 270px;
+            top: 100px;
+            left: 23px;
             z-index: 1000;
             background-color: white;
             padding: 10px;
@@ -688,38 +689,43 @@
          data-step="1"></div>
 
     <!-- Interface utilisateur sur la carte -->
-    <div class="map-ui"
-         data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
-         data-step="2">
-        <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-4 ">
+        <div class="map-ui"
+             data-intro="TraceMap vous permet de partager des photos et vidéos liées à des lieux spécifiques sur la carte."
+             data-step="2" >
+            <div class="flex items-center justify-between">
 
-            <h1 class="text-xl font-bold text-gray-800">TraceMap</h1>
-            <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Aide
-            </button>
+                <h1 class="text-xl font-bold text-gray-800">TraceMap</h1>
+                <button id="restart-tutorial" class="text-sm text-blue-600 hover:text-blue-800 flex items-center ml-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Aide
+                </button>
+
+            </div>
+
 
         </div>
-    </div>
+        <!-- Compteur d'utilisateurs en ligne séparé -->
+        <div class="map-ui-online-count"
+             data-intro="Ici vous voir le nombre d'utilisateurs en ligne."
+             data-step="3">
+            <div class="flex items-center justify-between">
 
-
-    <!-- Compteur d'utilisateurs en ligne séparé -->
-      <div class="map-ui-online-count"
-         data-intro="Ici vous voir le nombre d'utilisateurs en ligne."
-         data-step="3">
-        <div class="flex items-center justify-between">
-
-             <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-sm font-medium text-gray-700">
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-gray-700">
               Online:  <span id="online-count">0</span>
             </span>
 
+            </div>
         </div>
     </div>
+
+
+
 
 
     <!-- Chaton animé -->
@@ -2167,7 +2173,7 @@
 
             setTimeout(() => {
                 cat.style.left = `-${catWidth}px`;
-                setTimeout(moveCat, 60000); // Redémarre l'animation après 20s
+                setTimeout(moveCat, 20000); // Redémarre l'animation après 20s
             }, 20000); // 20s pour traverser l'écran
         }
 

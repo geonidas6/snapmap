@@ -1,10 +1,10 @@
 {
     "name": "TraceMap",
     "short_name": "TraceMap",
-    "background_color": "#2563eb",
+    "background_color": "#ffffff",
     "display": "standalone",
     "description": "Partagez vos moments g\u00e9olocalis\u00e9s",
-    "theme_color": "#2563eb",
+    "theme_color": "#ffffff",
     "start_url": "/",
     "icons": [
         {

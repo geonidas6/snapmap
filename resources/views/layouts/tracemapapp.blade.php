@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-title" content="TraceMap">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="TraceMap">
-    <meta name="msapplication-TileColor" content="#2563eb">
-    <meta name="msapplication-navbutton-color" content="#2563eb">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-navbutton-color" content="#ffffff">
     <meta name="msapplication-starturl" content="/?source=pwa">
     <meta name="format-detection" content="telephone=no">
     <meta name="google" content="notranslate" />
@@ -122,6 +122,7 @@
 
     {{--splash screen--}}
     <style>
+
         #splash-screen {
             position: fixed;
             top: 0;
