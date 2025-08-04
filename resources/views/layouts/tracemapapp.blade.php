@@ -21,28 +21,29 @@
     <meta name="apple-touch-startup-image" content="/logo.png">
 
     <!-- iOS splash screens -->
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-2048-2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-1668-2388.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-1536-2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-1125-2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-1242-2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-828-1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-1242-2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-750-1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="/icons/apple-splash-640-1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-2048-2732.png')}}" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-1668-2388.png')}}" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-1536-2048.png')}}" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-1125-2436.png')}}" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-1242-2688.png')}}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-828-1792.png')}}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-1242-2208.png')}}" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-750-1334.png')}}" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="{{asset('icons/apple-splash-640-1136.png')}}" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
 
     <!-- Icons -->
-    <link rel="apple-touch-icon" href="/icons/apple-icon-180x180.svg" sizes="180x180">
-    <link rel="apple-touch-icon" href="/icons/apple-icon-152x152.svg" sizes="152x152">
-    <link rel="apple-touch-icon" href="/icons/apple-icon-144x144.svg" sizes="144x144">
-    <link rel="apple-touch-icon" href="/icons/apple-icon-120x120.svg" sizes="120x120">
-    <link rel="icon" type="image/svg+xml" href="/icons/android-icon-192x192.svg" sizes="192x192">
-    <link rel="icon" type="image/svg+xml" href="/icons/android-icon-96x96.svg" sizes="96x96">
+    <link rel="apple-touch-icon" href="{{asset('icons/apple-icon-180x180.svg')}}" sizes="180x180">
+    <link rel="apple-touch-icon" href="{{asset('icons/apple-icon-152x152.svg')}}" sizes="152x152">
+    <link rel="apple-touch-icon" href="{{asset('icons/apple-icon-144x144.svg')}}" sizes="144x144">
+    <link rel="apple-touch-icon" href="{{asset('icons/apple-icon-120x120.svg')}}" sizes="120x120">
+    <link rel="icon" type="image/svg+xml" href="{{asset('icons/android-icon-192x192.svg')}}" sizes="192x192">
+    <link rel="icon" type="image/svg+xml" href="{{asset('icons/android-icon-96x96.svg')}}" sizes="96x96">
 
     <!-- PWA  -->
     <meta name="theme-color" content="{{config('pwa.theme_color')}}"/>
-    <link rel="apple-touch-icon" href="/logo.png">
-    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
+    <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}" crossorigin="use-credentials">
+
     <!-- PWA end -->
 
     <!-- Styles -->
@@ -117,6 +118,58 @@
         }
     </style>
 
+
+
+    {{--splash screen--}}
+    <style>
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0, #e0e0e0);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease-out;
+        }
+
+        #splash-screen.hidden {
+            opacity: 0;
+        }
+
+        #splash-logo {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
 
 
     <!-- Matomo -->

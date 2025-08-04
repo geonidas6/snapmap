@@ -1,7 +1,14 @@
 @extends('layouts.tracemapapp')
 
 @section('content')
+
+
+
     <style>
+        #map .leaflet-bottom .leaflet-control-attribution{
+            display:none;
+        }
+
         /* Styles pour le chaton animé */
         #helper-cat {
             position: fixed;
@@ -594,9 +601,89 @@
         .leaflet-control-locate a:hover {
             background-color: #f5f5f5 !important;
         }
+
+        /* Styles for Skeleton Screen */
+        #map-skeleton {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #f3f4f6; /* gray-100 */
+            z-index: 100;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .skeleton-pulse {
+            animation: pulse-bg 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 8px;
+        }
+
+        @keyframes pulse-bg {
+            50% {
+                background-color: #d1d5db; /* gray-300 */
+            }
+        }
+
+        .skeleton-header {
+            height: 50px;
+            width: 250px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .skeleton-online-count {
+            height: 40px;
+            width: 120px;
+            position: absolute;
+            top: 20px;
+            left: 270px;
+        }
+
+        .skeleton-map-controls {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .skeleton-control-button {
+            width: 36px;
+            height: 36px;
+        }
+
+        .skeleton-chat-toggle {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 9999px;
+        }
     </style>
+
+    <!-- Skeleton Screen -->
+    <div id="map-skeleton">
+        <div class="skeleton-header skeleton-pulse"></div>
+        <div class="skeleton-online-count skeleton-pulse"></div>
+        <div class="skeleton-map-controls">
+            <div class="skeleton-control-button skeleton-pulse"></div>
+            <div class="skeleton-control-button skeleton-pulse"></div>
+        </div>
+        <div class="skeleton-chat-toggle skeleton-pulse"></div>
+    </div>
+    <div id="splash-screen">
+        <img id="splash-logo" src="{{ asset('images/chat-jouant-unscreen.gif') }}" alt="Logo" class="w-32 h-32">
+    </div>
     <!-- Carte en plein écran -->
     <div id="map"
+         style="visibility: hidden;"
          data-intro="Bienvenue sur TraceMap ! Voici la carte interactive où vous pouvez voir et partager des moments géolocalisés. Cliquez sur n'importe quel point de la carte pour ajouter un nouveau tracemap."
          data-step="1"></div>
 
@@ -849,6 +936,10 @@
         let tempMarker = null;
         let userLocationMarker = null;
 
+        // Afficher le skeleton et masquer la carte initialement
+        const mapElement = document.getElementById('map');
+        const skeletonElement = document.getElementById('map-skeleton');
+
         // Initialisation de la carte (centrée temporairement sur Paris)
         const map = L.map('map', {
             zoomControl: false, // Désactiver les contrôles de zoom par défaut pour les ajouter manuellement
@@ -870,6 +961,16 @@
 
         // Ajouter la couche par défaut à la carte
         baseMaps["Satellite"].addTo(map);
+
+        // Événement pour détecter quand la carte est entièrement chargée
+        map.whenReady(function() {
+            // Masquer le skeleton et afficher la carte
+            skeletonElement.style.opacity = '0';
+            setTimeout(() => {
+                skeletonElement.style.display = 'none';
+                mapElement.style.visibility = 'visible';
+            }, 500); // Attendre la fin de la transition
+        });
 
         // Ajouter le contrôle de couches
         const layersControl = L.control.layers(baseMaps, null, {position: 'topright'}).addTo(map);
@@ -2066,7 +2167,7 @@
 
             setTimeout(() => {
                 cat.style.left = `-${catWidth}px`;
-                setTimeout(moveCat, 20000); // Redémarre l'animation après 20s
+                setTimeout(moveCat, 60000); // Redémarre l'animation après 20s
             }, 20000); // 20s pour traverser l'écran
         }
 
@@ -2491,5 +2592,18 @@
 
 
 
+    </script>
+
+    <script>
+        window.addEventListener('load', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+            }, 500); // Attendre 500ms avant de commencer la transition
+
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+            }, 1500); // Supprimer l'élément après la transition
+        });
     </script>
 @endsection
