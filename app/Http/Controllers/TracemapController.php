@@ -40,6 +40,7 @@ class TracemapController extends Controller
             'content.*' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240',
         ]);
 
+
         // Crée un nouveau tracemap avec les données validées
         $tracemap = Tracemap::create([
             'latitude' => $validated['latitude'],
@@ -75,6 +76,7 @@ class TracemapController extends Controller
             $validated = $request->validate([
                 'latitude' => 'required|numeric',
                 'longitude' => 'required|numeric',
+                'message' => 'nullable|string|max:1000',
                 'content' => 'required|array',
                 'content.*' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240',
             ]);
@@ -83,6 +85,7 @@ class TracemapController extends Controller
             $tracemap = Tracemap::create([
                 'latitude' => $validated['latitude'],
                 'longitude' => $validated['longitude'],
+                'message' => $validated['message'],
             ]);
 
             $mediaItems = [];
@@ -114,6 +117,7 @@ class TracemapController extends Controller
                 'id' => $tracemap->id,
                 'latitude' => $tracemap->latitude,
                 'longitude' => $tracemap->longitude,
+                'message' => $tracemap->message,
                 'media' => $mediaItems
             ];
 
@@ -212,14 +216,14 @@ class TracemapController extends Controller
 
     /**
      * Récupère les messages récents (moins de 24h) pour le chat
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getMessages()
     {
         try {
             $messages = Message::getRecentMessages();
-            
+
             return response()->json([
                 'success' => true,
                 'messages' => $messages
@@ -234,7 +238,7 @@ class TracemapController extends Controller
 
     /**
      * Stocke un nouveau message dans la base de données et le diffuse en temps réel
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -271,7 +275,7 @@ class TracemapController extends Controller
 
     /**
      * Diffuse un nouveau message via Pusher pour une communication en temps réel
-     * 
+     *
      * @param array $messageData Les données du message à diffuser
      * @return void
      */

@@ -195,6 +195,30 @@ class AdminController extends Controller
         return redirect()->route('admin.tracemaps')
                          ->with('success', count($ids) . ' tracemap(s) supprimé(s) avec succès.');
     }
+
+    /**
+     * Affiche le formulaire de modification d'un tracemap
+     */
+    public function editTracemap(Tracemap $tracemap)
+    {
+        return view('admin.tracemaps.edit', compact('tracemap'));
+    }
+
+    /**
+     * Met à jour un tracemap spécifique
+     */
+    public function updateTracemap(Request $request, Tracemap $tracemap)
+    {
+        $validated = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'message' => 'nullable|string|max:1000',
+        ]);
+
+        $tracemap->update($validated);
+
+        return redirect()->route('admin.tracemaps')->with('success', 'Tracemap mis à jour avec succès.');
+    }
     
     /**
      * Affiche la liste des messages pour l'administration

@@ -28,7 +28,7 @@ Route::middleware('auth')->group(function () {
 Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
     // Récupérer le nom du canal depuis la requête
     $channelName = $request->input('channel_name');
-    
+
     if ($channelName === 'presence-tracemap-presence') {
         // Toujours autoriser l'accès au canal de présence
         if (Auth::check()) {
@@ -48,7 +48,7 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
                 'type' => 'guest'
             ];
         }
-        
+
         // Générer la signature d'authentification pour Pusher
         $pusher = new \Pusher\Pusher(
             config('broadcasting.connections.pusher.key'),
@@ -56,14 +56,14 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
             config('broadcasting.connections.pusher.app_id'),
             config('broadcasting.connections.pusher.options')
         );
-        
+
         $socketId = $request->input('socket_id');
         $auth = $pusher->authorizePresenceChannel($channelName, $socketId, $userData['id'], $userData);
-       
+
         return $auth;
-       
+
     }
-    
+
     return response()->json(['error' => 'Unauthorized'], 403);
 })->name('broadcasting.auth');
 
@@ -79,11 +79,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Route pour réinitialiser la base de données
     Route::post('/admin/reset', [AdminController::class, 'resetDatabase'])->name('admin.reset');
-    
+
     // Routes pour la gestion des tracemaps
     Route::get('/admin/tracemaps', [AdminController::class, 'tracemaps'])->name('admin.tracemaps');
+    Route::get('/admin/tracemaps/{tracemap}/edit', [AdminController::class, 'editTracemap'])->name('admin.tracemaps.edit');
+    Route::put('/admin/tracemaps/{tracemap}', [AdminController::class, 'updateTracemap'])->name('admin.tracemaps.update');
     Route::post('/admin/tracemaps/delete', [AdminController::class, 'deleteTracemaps'])->name('admin.tracemaps.delete');
-    
+
     // Routes pour la gestion des messages
     Route::get('/admin/messages', [AdminController::class, 'messages'])->name('admin.messages');
     Route::post('/admin/messages/delete', [AdminController::class, 'deleteMessages'])->name('admin.messages.delete');
@@ -94,6 +96,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::get('/maintenance/{secret}', [AdminController::class, 'maintenance'])->name('admin.maintenance');
 
 require __DIR__.'/auth.php';
+
 
 
 

@@ -15,8 +15,10 @@ class Tracemap extends Model
     protected $fillable = [
         'latitude',
         'longitude',
+        'message',
     ];
-    
+
+
     /**
      * Obtient les médias associés à ce tracemap.
      *

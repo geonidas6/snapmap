@@ -378,8 +378,8 @@
 
         .fullscreen-media img,
         .fullscreen-media video {
-            max-width: 90%;
-            max-height: 80vh;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
 
@@ -715,6 +715,12 @@
 
                     <!-- Conteneur de prévisualisation avec style amélioré -->
                     <div id="preview-container" class="grid grid-cols-2 gap-3 mb-6"></div>
+
+                    <!-- Champ pour le message -->
+                    <div class="mb-6">
+                        <label for="message" class="text-lg font-medium text-gray-800">Message (optionnel)</label>
+                        <textarea name="message" id="message" rows="3" class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" placeholder="Ajoutez une description ou un message..."></textarea>
+                    </div>
 
                     <!-- Bulle de texte style Tracemapchat -->
                     <div class="tracemap-bubble bg-yellow-100 text-yellow-800 mb-6 mx-auto text-center">
@@ -1453,9 +1459,10 @@
                 }
             }
 
+
             // Traiter chaque fichier
             Array.from(contentInput.files).forEach((file, index) => {
-                if (file.type.startsWith('image/')) {
+                if (file.type.startsWith('image/') && file.type !== 'image/gif') {
                     // Compresser l'image avant de l'ajouter au FormData
                     new Compressor(file, {
                         quality: 0.8, // Qualité de l'image (0 à 1)
@@ -1949,10 +1956,18 @@
             const bubbleContainer = document.createElement('div');
             bubbleContainer.className = 'flex flex-col items-center mt-4 slide-up';
             bubbleContainer.style.position = 'fixed';
-            bubbleContainer.style.top = '80px';
+            bubbleContainer.style.bottom = '80px';
             bubbleContainer.style.left = '50%';
             bubbleContainer.style.transform = 'translateX(-50%)';
             bubbleContainer.style.zIndex = '10000';
+
+            // Afficher le message du tracemap s'il existe
+            if (tracemapObj && tracemapObj.message) {
+                const messageBubble = document.createElement('div');
+                messageBubble.className = 'tracemap-bubble';
+                messageBubble.textContent = tracemapObj.message;
+                bubbleContainer.appendChild(messageBubble);
+            }
 
             // Afficher la durée depuis laquelle le statut est publié
             const timeAgo = document.createElement('div');

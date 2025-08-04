@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+
 @section('content')
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -26,7 +27,7 @@
                     <div class="mb-6">
                         <form action="{{ route('admin.tracemaps') }}" method="GET" class="flex space-x-4">
                             <div class="flex-1">
-                                <input type="text" name="search" value="{{ $search }}" placeholder="Rechercher par ID, latitude ou longitude..." 
+                                <input type="text" name="search" value="{{ $search }}" placeholder="Rechercher par ID, latitude ou longitude..."
                                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                             <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
@@ -55,6 +56,7 @@
                                         <th class="px-4 py-2 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Longitude</th>
                                         <th class="px-4 py-2 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Médias</th>
                                         <th class="px-4 py-2 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de création</th>
+                                        <th class="px-4 py-2 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200">
@@ -68,6 +70,9 @@
                                             <td class="px-4 py-2 whitespace-nowrap">{{ $tracemap->longitude }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap">{{ $tracemap->media->count() }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap">{{ $tracemap->created_at->format('d/m/Y H:i') }}</td>
+                                            <td class="px-4 py-2 whitespace-nowrap">
+                                                <a href="{{ route('admin.tracemaps.edit', $tracemap) }}" class="text-blue-600 hover:text-blue-900">Modifier</a>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
